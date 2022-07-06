@@ -10,25 +10,38 @@
 </div>
 
 <!-- Sidebar -->
-
-<div class="container" style="margin-left: 0">
+<div class="container" style="margin-left: 0;">
 
     <div class="row justify-content-md-center">
-        <div class="col-3 sidebar">
-            <div class="mx-auto row counter-window">
+        
+        <div class="col-3 sidebar container">
+        
+            <div class="row mx-auto row counter-window">
                 <div class="col-8 counter-stats">
-                    <p>Gedetecteerd: 42</p>
-                    <p>Eigen telling: 10</p>
+                    <p>Gedetecteerd: 46</p>
+                    <p>Eigen telling: 12</p>
                 </div>
                 <div class="col-4 current-count">
                     <p>Totaal:</p>
                     <p class="current-count-number">58</p>
                 </div>
             </div>
-          </div>
-          <div class="col-9">
+
+            <div class="row mx-auto align-items-end action-buttons">
+                <div class="col-12 d-flex justify-content-end">
+                    <button type="button" class="btn btn-success save-button">Opslaan</button>
+                    <button type="button" class="btn btn-warning refresh-button">
+                        <mat-icon class="refresh-icon">refresh</mat-icon>
+                    </button>
+                </div>
+            </div>
+        
+        </div>
+
+
+        <div class="col-9">
             Counter component
-          </div>
+        </div>
     </div>
 
 </div>

@@ -24,7 +24,7 @@
 .counter-window {
 	background: #9D9D9D;
 	width: 96%;
-	height: 13%;
+	height: 20vh;
 	color:#FFFFFF;
 }
 
@@ -46,4 +46,31 @@
 
 .current-count-number {
 	font-size: 50px
+}
+
+.action-buttons {
+	width: 96%;
+	height: 70vh;
+	padding-bottom: 15px;
+}
+
+.save-button {
+	font-size: 28px;
+	margin-right: 20px;
+	background: #2E872C;
+	border-color: #2E872C;
+}
+
+.refresh-button {
+	font-size: 28px;
+	align-content: center;
+	display: flex;
+    align-items: center;
+	background: #D66F10;
+	border-color: #D66F10;
+	color: white;
+}
+
+.refresh-icon {
+	transform: scale(1.7);
 }
