@@ -39,7 +39,13 @@
 
 
         <div class="col-9 counter-container">
-            <img src="./../../assets/images/colony_image_1.jpg" class="colony-img" />
+            <image-drawing id="image-drawing" class="colony-img" style="width: 100%; height: unset;"
+                [src]="'./../../assets/images/colony_image_sm.jpg'"
+                outputMimeType="'image/jpeg'"
+            >
+            </image-drawing>
+
+            <!-- <img src="./../../assets/images/colony_image_1.jpg" class="colony-img" /> -->
         </div>
     </div>
 
