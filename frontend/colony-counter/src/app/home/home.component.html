@@ -18,18 +18,18 @@
             <div class="row mx-auto row counter-window">
                 <div class="col-8 counter-stats">
                     <p>Gedetecteerd: {{calculatedCount}}</p>
-                    <p>Eigen telling: {{manualCount}}</p>
+                    <p>Eigen telling: {{countList.length}}</p>
                 </div>
                 <div class="col-4 current-count">
                     <p>Totaal:</p>
-                    <p class="current-count-number">{{totalCount}}</p>
+                    <p class="current-count-number">{{calculatedCount + countList.length}}</p>
                 </div>
             </div>
 
             <div class="row mx-auto align-items-end action-buttons">
                 <div class="col-12 d-flex justify-content-end">
                     <button type="button" class="btn btn-success save-button">Opslaan</button>
-                    <button type="button" class="btn btn-warning refresh-button">
+                    <button id="undoButton" type="button" class="btn btn-warning undo-button" (click)="undoLastCount()">
                         <mat-icon class="refresh-icon">refresh</mat-icon>
                     </button>
                 </div>
@@ -39,13 +39,15 @@
 
 
         <div class="col-9 counter-container">
-            <image-drawing id="image-drawing" class="colony-img" style="width: 100%; height: unset;"
-                [src]="'./../../assets/images/colony_image_sm.jpg'"
-                outputMimeType="'image/jpeg'"
-            >
-            </image-drawing>
 
-            <!-- <img src="./../../assets/images/colony_image_1.jpg" class="colony-img" /> -->
+            <div>
+                <canvas
+                  id="canvas"
+                  width="1153"
+                  height="865"
+                  style="padding: 0"
+                ></canvas>
+              </div>
         </div>
     </div>
 
