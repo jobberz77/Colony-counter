@@ -3,7 +3,7 @@
     <mat-toolbar>
         <span>Colony Counter</span>
         <span class="header-spacer"></span>
-        <button mat-icon-tune class="icon-button">
+        <button mat-icon-tune class="icon-button" (click)="openSettingsModal()">
             <mat-icon>tune</mat-icon>
         </button>
     </mat-toolbar>
@@ -50,5 +50,9 @@
               </div>
         </div>
     </div>
+
+    <settings-modal #modal>
+        <!--  body of the modal  -->
+    </settings-modal>
 
 </div>
