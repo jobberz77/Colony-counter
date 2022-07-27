@@ -10,8 +10,8 @@ export class BackendService {
   constructor(private http: HttpClient) {
   }
 
-  getData(): Observable<string> {
-    return this.http.get<string>(`${API_URL}/hans`);
+  getImage(): Observable<string> {
+    return this.http.get<string>(`${API_URL}/get_image`);
   }
 
   private static _handleError(err: HttpErrorResponse | any) {

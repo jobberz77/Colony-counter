@@ -27,12 +27,17 @@ export class HomeComponent implements OnInit {
 	// manualCount: number = 16;
 	calculatedCount: number = 0;
 
+	base64Image = "";
+
 	constructor(private backendService: BackendService) { }
 
 	ngOnInit(): void {
-		this.initializeCanvas();
+		// TODO: Move this one to a method where the call for inserting the image is done.
+		this.backendService.getImage().subscribe(data => {
+			this.base64Image = data;
 
-		this.backendService.getData().subscribe(data => console.log(data));
+			this.initializeCanvas();
+		});
 	}
 
 	openSettingsModal() {
@@ -91,7 +96,7 @@ export class HomeComponent implements OnInit {
 		};
 
 		this.image = new Image();
-		this.image.src = './../../assets/images/colony_image_sm.jpg';
+		this.image.src = 'data:image/png;base64,' + this.base64Image;
 		this.image.width = 1153;
 		this.image.height = 865;
 		this.image.onload = function () {
