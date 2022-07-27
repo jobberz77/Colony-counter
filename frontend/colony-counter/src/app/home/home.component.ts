@@ -1,6 +1,6 @@
 import { AfterViewChecked, AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { reduce } from 'rxjs';
 import { CountModel } from 'src/shared/models/CountModel';
+import { BackendService } from '../services/backend-service.component';
 import { SettingsComponent } from './settings/settings.component';
 
 @Component({
@@ -27,10 +27,12 @@ export class HomeComponent implements OnInit {
 	// manualCount: number = 16;
 	calculatedCount: number = 0;
 
-	constructor() { }
+	constructor(private backendService: BackendService) { }
 
 	ngOnInit(): void {
 		this.initializeCanvas();
+
+		this.backendService.getData().subscribe(data => console.log(data));
 	}
 
 	openSettingsModal() {
