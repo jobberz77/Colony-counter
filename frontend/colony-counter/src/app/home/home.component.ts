@@ -23,8 +23,8 @@ export class HomeComponent implements OnInit {
 
 	// Counting variables
 	countList: Array<CountModel> = new Array<CountModel>();
-	// totalCount: number = 58;
-	// manualCount: number = 16;
+	totalCount: number = 58;
+	manualCount: number = 0;
 	calculatedCount: number = 0;
 
 	base64Image = "";
@@ -33,8 +33,9 @@ export class HomeComponent implements OnInit {
 
 	ngOnInit(): void {
 		// TODO: Move this one to a method where the call for inserting the image is done.
-		this.backendService.getImage().subscribe(data => {
-			this.base64Image = data;
+		this.backendService.getImage().subscribe(countResult => {
+			this.base64Image = countResult.base64_image;
+			this.calculatedCount = countResult.count;
 
 			this.initializeCanvas();
 		});
@@ -53,11 +54,13 @@ export class HomeComponent implements OnInit {
 
 	addCount(x: number, y: number) {
 		this.countList.push(new CountModel(x, y));
+		this.manualCount++;
 	}
 
 	undoLastCount() {
 		if (this.countList.length > 0) {
 			this.countList.pop();
+			this.manualCount--;
 
 			this.resetCount();
 		}
