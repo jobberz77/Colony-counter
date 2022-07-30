@@ -1,5 +1,6 @@
 import { AfterViewChecked, AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { CountModel } from 'src/shared/models/CountModel';
+import { CountResultModel } from '../entities/count-result.model';
 import { BackendService } from '../services/backend-service.component';
 import { SettingsComponent } from './settings/settings.component';
 
@@ -22,27 +23,23 @@ export class HomeComponent implements OnInit {
 	drawColor = 'red';
 
 	// Counting variables
+	imageCountModel: CountResultModel;
+
 	countList: Array<CountModel> = new Array<CountModel>();
 	totalCount: number = 58;
 	manualCount: number = 0;
 	calculatedCount: number = 0;
-
-	base64Image = "";
 
 	constructor(private backendService: BackendService) { }
 
 	ngOnInit(): void {
 		// TODO: Move this one to a method where the call for inserting the image is done.
 		this.backendService.getImage().subscribe(countResult => {
-			this.base64Image = countResult.base64_image;
 			this.calculatedCount = countResult.count;
+			this.imageCountModel = countResult;
 
 			this.initializeCanvas();
 		});
-	}
-
-	openSettingsModal() {
-		return this.settingsModal.open();
 	}
 
 	initializeCanvas() {
@@ -52,15 +49,19 @@ export class HomeComponent implements OnInit {
 		this.drawOnImage();
 	}
 
+	openSettingsModal() {
+		return this.settingsModal.open();
+	}
+
 	addCount(x: number, y: number) {
 		this.countList.push(new CountModel(x, y));
-		this.manualCount++;
+		this.incrementCount();
 	}
 
 	undoLastCount() {
 		if (this.countList.length > 0) {
 			this.countList.pop();
-			this.manualCount--;
+			this.decrementCount();
 
 			this.resetCount();
 		}
@@ -99,12 +100,26 @@ export class HomeComponent implements OnInit {
 		};
 
 		this.image = new Image();
-		this.image.src = 'data:image/png;base64,' + this.base64Image;
+		this.image.src = 'data:image/png;base64,' + this.imageCountModel.base64_image;
 		this.image.width = 1153;
 		this.image.height = 865;
 		this.image.onload = function () {
 			self.canvasContext.drawImage(self.image, 0, 0, 1153, 865);
 		}
+	}
+
+	incrementCount() {
+		this.manualCount++;
+		this.imageCountModel.count++;
+	}
+
+	decrementCount() {
+		this.manualCount--;
+		this.imageCountModel.count--;
+	}
+
+	saveImageCount() {
+		this.backendService.saveImage(this.imageCountModel);
 	}
 
 }

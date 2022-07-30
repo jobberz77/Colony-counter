@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, send_file
+import base64
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from base64 import encodebytes
 from PIL import Image
@@ -30,13 +31,27 @@ def get_image():
     image_path = './assets/images/colony_image_original.jpg' # point to your image location
     base64_image = get_response_image(image_path)
     
-    result = CountResult(base64_image, 16)
+    result = CountResult(base64_image, 16, 'xxxx-xxxx-xxxx-xxxx')
     
     schema = CountResultSchema(many=False)
     resultSchema = schema.dump(result)
     
     return jsonify(resultSchema) # send the result to client
     
+@app.route('/save_image', methods=['POST'])
+def save_count_result():
+    saved_count_result = CountResultSchema().load(request.get_json())
     
+    result = CountResult(**saved_count_result)
+    
+    #save result to disk
+    with open(build_image_name(result.count, result.serialnumber), "wb") as fh:
+        fh.write(base64.b64decode((result.base64_image)))
+    
+    return jsonify('Success')
+
+def build_image_name(count, serialnumber):
+    return f'{count:.0f} -- {serialnumber}.jpg'     
+
 if __name__=="__main__":
     app.run()
