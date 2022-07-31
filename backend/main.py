@@ -21,15 +21,59 @@ sf = 6
 sr = 5
 
 start = 24
-power = 25
+stop = 25
 start_led = 13
-power_led = 26
+stop_led = 26
 
 GPIO.setup(start, GPIO.IN, pull_up_down = GPIO.PUD_UP)
-GPIO.setup(power, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(stop, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 GPIO.setup(start_led, GPIO.OUT)
-GPIO.setup(power_led, GPIO.OUT)
+GPIO.setup(stop_led, GPIO.OUT)
+
+def ledl(i):
+    pos_r = 27; pos_g= 2; pos_b = 4
+    GPIO.setup(pos_r, GPIO.OUT)
+    GPIO.setup(pos_g, GPIO.OUT)
+    GPIO.setup(pos_b, GPIO.OUT)
+    
+    GPIO.output(pos_r, 0)
+    GPIO.output(pos_g, 0)
+    GPIO.output(pos_b, 0)
+
+    if i == 'r':
+        GPIO.output(pos_r, 1)
+
+    if i == 'g':
+        GPIO.output(pos_g, 1)
+
+    if i == 'b':
+        GPIO.output(pos_b, 1)
+
+    else:
+        GPIO.output(pos_r, 0)
+
+def ledr(i):
+    pos_r = 22; pos_g= 0; pos_b = 1
+    GPIO.setup(pos_r, GPIO.OUT)
+    GPIO.setup(pos_g, GPIO.OUT)
+    GPIO.setup(pos_b, GPIO.OUT)
+    
+    GPIO.output(pos_r, 0)
+    GPIO.output(pos_g, 0)
+    GPIO.output(pos_b, 0)
+    
+    if i == 'r':
+        GPIO.output(pos_r, 1)
+
+    if i == 'g':
+        GPIO.output(pos_g, 1)
+
+    if i == 'b':
+        GPIO.output(pos_b, 1)
+
+    else:
+        GPIO.output(pos_r, 0)
 
 
 def darkfield(pwm_servo, led_r, led_g, led_b, servo_pos):
@@ -94,11 +138,14 @@ def motion(move_f, move_r, pwm_s, sen_f, sen_r, move):
 
 def picture(qr_code):
     camera = cv2.VideoCapture(0)
+    ledr('g')
     for i in range(1):
         return_value, image = camera.read()
         cv2.imwrite('/home/pi/Desktop/'+ qr_code + '_original' +'.png', image)
     del(camera)
+    ledr('n')
     return image
+    
 
 def qr_code():
     check = True
@@ -113,8 +160,10 @@ def qr_code():
     if code == "'":
         check = False
         print('No object')
+        ledr('r')
     else:
         print(code)
+        ledr('g')
     qr_code = [code, check]
     return qr_code
 
@@ -170,7 +219,11 @@ def counting(img, qr_code):
     cv2.waitKey(0)
 
 while True:
+    ledl('n')
+    ledr('n')
+    ledl('b')
     GPIO.output(start_led, 0)
+    GPIO.output(stop_led, 0)
     run = False
     wait = True
 
@@ -209,17 +262,26 @@ while True:
         counting(img, code[0])
 
         while wait:
+            GPIO.output(stop_led, 1)
             if GPIO.input(start) == 1:
                 wait = False
+                print("restart")
+                ledl('g')
+                GPIO.output(stop_led, 0)
+            if GPIO.input(stop) == 1:
+                wait = False
+                run = False
+                print("stop")
+                ledl('r')
+                motion(M_F, M_R, M_S, sf, sr, 'r') #backward
+                time.sleep(2)
+                GPIO.output(start_led, 0)
+                GPIO.output(stop_led, 0)
 
         wait = True
         
-        motion(M_F, M_R, M_S, sf, sr, 'r') #backward
-        time.sleep(2)
+        
 
-        run = False
-        print("stop")
-        GPIO.output(start_led, 0)
 
 
 
