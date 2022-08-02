@@ -28,7 +28,7 @@ def get_response_image(image_path):
 @app.route('/get_image')
 
 def get_image():
-    image_path = './assets/images/colony_image_original.jpg' # point to your image location
+    image_path = './assets/images/colony_with_count.jpg' # point to your image location
     base64_image = get_response_image(image_path)
     
     result = CountResult(base64_image, 16, 'xxxx-xxxx-xxxx-xxxx')
@@ -51,7 +51,7 @@ def save_count_result():
     return jsonify('Success')
 
 def build_image_name(count, serialnumber):
-    return f'{count:.0f} -- {serialnumber}.jpg'     
+    return f'results/{count:.0f} -- {serialnumber}.jpg'     
 
 if __name__=="__main__":
     app.run()

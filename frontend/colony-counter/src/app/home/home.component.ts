@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CountModel } from 'src/shared/models/CountModel';
 import { CountResultModel } from '../entities/count-result.model';
 import { BackendService } from '../services/backend-service.component';
@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
 	image: HTMLImageElement;
 	imageWidth: 1532;
 	imageHeight: 1152;
-	drawSize = 10;
+	drawSize = 8;
 	drawColor = 'red';
 
 	// Counting variables
@@ -119,6 +119,9 @@ export class HomeComponent implements OnInit {
 	}
 
 	saveImageCount() {
+		var countResult = this.canvasElement.toDataURL("image/jpeg").split(';base64,')[1];
+
+		this.imageCountModel.base64_image = countResult;
 		this.backendService.saveImage(this.imageCountModel);
 	}
 
