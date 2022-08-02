@@ -32,6 +32,7 @@ GPIO.setup(start_led, GPIO.OUT)
 GPIO.setup(power_led, GPIO.OUT)
 
 
+
 def darkfield(pwm_servo, led_r, led_g, led_b, servo_pos):
     servo_pos = (servo_pos/20)+2.5
     GPIO.setup(pwm_servo, GPIO.OUT)
@@ -118,7 +119,8 @@ def qr_code():
     qr_code = [code, check]
     return qr_code
 
-def counting(img, qr_code):
+# counts and returns the image and the count
+def calculate_count_and_return_image_and_count(img, qr_code):
     # Read image. 
     #os.chdir(os.path.dirname(os.path.abspath(__file__)))
     #img = cv2.imread(image, cv2.IMREAD_COLOR)
@@ -163,17 +165,81 @@ def counting(img, qr_code):
             
             amount += 1
 
-    cv2.imshow("Detected Circle", img)
-    cv2.imshow("gray", gray_blurred) 
-    cv2.imwrite('/home/pi/Desktop/'+ qr_code + '_count' +'.png', img)
-    print ('amount', amount)
-    cv2.waitKey(0)
+    # return image and amount
+    return img, amount
 
+
+def create_image_and_return_counted():
+    while True:
+        GPIO.output(start_led, 0)
+        run = False
+        wait = True
+
+        # Als de start knop ingedrukt wordt
+        if GPIO.input(start) == 1:
+                run = True
+                GPIO.output(start_led, 1)
+                print("start")
+        
+        while run:
+            motion(M_F, M_R, M_S, sf, sr, 'f') #forward
+
+            #TODO hebben we deze wel nodig? Wait is hier altijd true en waarom willen we de knop nogmaals indrukken?
+            while wait:
+                if GPIO.input(start) == 1:
+                    wait = False
+
+                    print("thanks")
+            wait = True
+
+            motion(M_F, M_R, M_S, sf, sr, 'r') #backward 
+
+            code = qr_code()
+            
+            #TODO Read in the values defined in the settings here
+            r = 120
+            g = 160
+            b = 80
+            d = 80
+
+            darkfield(17,g,r,b,d)
+    
+            img = picture(code[0])
+            
+            motion(M_F, M_R, M_S, sf, sr, 'f') #forward
+            time.sleep(2)
+
+            # result is a tuple (img, amount)
+            result = calculate_count_and_return_image_and_count(img, code[0])
+            
+            #TODO image opslaan in main.py waar we deze uitvoeren
+            return result
+
+
+def push_out_container():
+    #TODO Hebben we deze wait hier uberhaupt wel nodig aangezien we m zelf aanroepen vanuit front-end?
+    #TODO wachten totdat de start knop opnieuw gepusht is, daarna door?
+        while wait:
+            if GPIO.input(start) == 1:
+                wait = False
+
+        wait = True
+        
+        # bakje terug naar buiten
+        motion(M_F, M_R, M_S, sf, sr, 'r') #backward
+        time.sleep(2)
+
+        run = False
+        print("stop")
+        GPIO.output(start_led, 0)
+    
+#TODO Moeten we deze nog weghalen?
 while True:
     GPIO.output(start_led, 0)
     run = False
     wait = True
 
+    # Als de start knop ingedrukt wordt
     if GPIO.input(start) == 1:
             run = True
             GPIO.output(start_led, 1)
@@ -182,10 +248,10 @@ while True:
     while run:
         motion(M_F, M_R, M_S, sf, sr, 'f') #forward
 
+        #TODO hebben we deze wel nodig? Wait is hier altijd true en waarom willen we de knop nogmaals indrukken?
         while wait:
             if GPIO.input(start) == 1:
                 wait = False
-
 
                 print("thanks")
         wait = True
@@ -206,14 +272,16 @@ while True:
         motion(M_F, M_R, M_S, sf, sr, 'f') #forward
         time.sleep(2)
 
-        counting(img, code[0])
+        calculate_count_and_return_image_and_count(img, code[0])
 
+        #TODO wachten totdat de start knop opnieuw gepusht is, daarna door?
         while wait:
             if GPIO.input(start) == 1:
                 wait = False
 
         wait = True
         
+        # bakje terug naar buiten
         motion(M_F, M_R, M_S, sf, sr, 'r') #backward
         time.sleep(2)
 
