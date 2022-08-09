@@ -7,7 +7,7 @@ from entities.count_result_model import CountResult
 from entities.count_result_schema import CountResultSchema
 import io
 
-# from machine import machine_actions
+from machine import machine_actions
 
 app = Flask(__name__)
 CORS(app)
@@ -24,9 +24,19 @@ def get_response_image(image_path):
     encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii') # encode as base64
     return encoded_img
 
+@app.route('/swallow_container_and_return_image')
+def swallow_container_and_return_image():
+    # result is a tuple (img, amount)
+    result = machine_actions.swallow_container_and_return_image()
+
+    return jsonify(result[1])
+    #TODO: Hier image ook nog jsonifyen?
+    
+@app.route('/save_result_and_push_out_container')
+def save_result_and_push_out_container():
+    print('save_result_and_push_out_container')
 
 @app.route('/get_image')
-
 def get_image():
     image_path = './assets/images/colony_with_count.jpg' # point to your image location
     base64_image = get_response_image(image_path)

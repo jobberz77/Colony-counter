@@ -1,7 +1,8 @@
 export class CountResultModel {
+    constructor()
     constructor(
-        public base64_image: string,
-        public count: number,
-        public serialnumber: string
+        public base64_image?: string,
+        public count?: number,
+        public serialnumber?: string
     ) { }
 }

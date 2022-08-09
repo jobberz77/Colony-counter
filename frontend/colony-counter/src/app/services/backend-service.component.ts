@@ -15,12 +15,21 @@ export class BackendService {
     return this.http.get<CountResultModel>(`${API_URL}/get_image`);
   }
 
+  getPlaceholderImage(): Observable<string> {
+    return this.http.get('../../assets/images/placeholder_image_base64.txt', {responseType: 'text'});
+  }
+ 
+  swallowContainerAndGetResultingImage(): Observable<CountResultModel> {
+    return this.http.get<CountResultModel>(`${API_URL}/swallow_container_and_return_image`);
+  }
+  
+
   saveImage(countResultModel: CountResultModel) {
     let request = this.http.post<any>(`${API_URL}/save_image`, 
     {
       "base64_image": countResultModel.base64_image,
       "count": countResultModel.count,
-      "serialnumber": countResultModel.serialnumber
+      "serialnumber": countResultModel.serialnumber 
     });
 
     request.subscribe((data) => {

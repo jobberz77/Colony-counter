@@ -93,15 +93,15 @@ def motion(move_f, move_r, pwm_s, sen_f, sen_r, move):
             forward = False
             print("postion_front")  
 
-def picture(qr_code):
+def take_picture(qr_code):
     camera = cv2.VideoCapture(0)
     for i in range(1):
         return_value, image = camera.read()
-        cv2.imwrite('/home/pi/Desktop/'+ qr_code + '_original' +'.png', image)
+        cv2.imwrite('/home/pi/Desktop/'+ qr_code + '_original' +'.png', image) #TODO Deze save op de desktop weghalen
     del(camera)
     return image
 
-def qr_code():
+def scan_qr_code():
     check = True
     serialport = serial.Serial("/dev/ttyACM0", 115200, timeout= 2)
     cw = [0x7E,0x00,0x08,0x01,0x00,0x02,0x01,0xAB,0xCD]
@@ -169,56 +169,54 @@ def calculate_count_and_return_image_and_count(img, qr_code):
     return img, amount
 
 
-def create_image_and_return_counted():
-    while True:
-        GPIO.output(start_led, 0)
-        run = False
+def swallow_container_and_return_image():
+    GPIO.output(start_led, 0)
+    run = False
+    wait = True
+
+    # Als de start knop ingedrukt wordt -> Deze willen we waarschijnlijk niet doen
+    # if GPIO.input(start) == 1:
+    #         run = True
+    #         GPIO.output(start_led, 1)
+    #         print("start")
+    
+    while run:
+        motion(M_F, M_R, M_S, sf, sr, 'f') #forward
+
+        #TODO hebben we deze wel nodig? Wait is hier altijd true en waarom willen we de knop nogmaals indrukken?
+        while wait:
+            if GPIO.input(start) == 1:
+                wait = False
+
+                print("thanks")
         wait = True
 
-        # Als de start knop ingedrukt wordt
-        if GPIO.input(start) == 1:
-                run = True
-                GPIO.output(start_led, 1)
-                print("start")
+        motion(M_F, M_R, M_S, sf, sr, 'r') #backward 
+
+        code = scan_qr_code()
         
-        while run:
-            motion(M_F, M_R, M_S, sf, sr, 'f') #forward
+        #TODO Read in the values defined in the settings here
+        r = 120
+        g = 160
+        b = 80
+        d = 80
 
-            #TODO hebben we deze wel nodig? Wait is hier altijd true en waarom willen we de knop nogmaals indrukken?
-            while wait:
-                if GPIO.input(start) == 1:
-                    wait = False
+        darkfield(17,g,r,b,d)
 
-                    print("thanks")
-            wait = True
+        img = take_picture(code[0])
+        
+        motion(M_F, M_R, M_S, sf, sr, 'f') #forward
+        time.sleep(2)
 
-            motion(M_F, M_R, M_S, sf, sr, 'r') #backward 
-
-            code = qr_code()
-            
-            #TODO Read in the values defined in the settings here
-            r = 120
-            g = 160
-            b = 80
-            d = 80
-
-            darkfield(17,g,r,b,d)
-    
-            img = picture(code[0])
-            
-            motion(M_F, M_R, M_S, sf, sr, 'f') #forward
-            time.sleep(2)
-
-            # result is a tuple (img, amount)
-            result = calculate_count_and_return_image_and_count(img, code[0])
-            
-            #TODO image opslaan in main.py waar we deze uitvoeren
-            return result
+        # result is a tuple (img, amount)
+        result = calculate_count_and_return_image_and_count(img, code[0])
+        
+        return result
 
 
 def push_out_container():
     #TODO Hebben we deze wait hier uberhaupt wel nodig aangezien we m zelf aanroepen vanuit front-end?
-    #TODO wachten totdat de start knop opnieuw gepusht is, daarna door?
+    #TODO wachten totdat de start knop opnieuw gepusht is, daarna door? Waarom?
         while wait:
             if GPIO.input(start) == 1:
                 wait = False
@@ -233,7 +231,7 @@ def push_out_container():
         print("stop")
         GPIO.output(start_led, 0)
     
-#TODO Moeten we deze nog weghalen?
+#TODO Moeten we deze nog weghalen? -> Ja
 while True:
     GPIO.output(start_led, 0)
     run = False
@@ -258,7 +256,7 @@ while True:
 
         motion(M_F, M_R, M_S, sf, sr, 'r') #backward 
 
-        code = qr_code()
+        code = scan_qr_code()
         
         r = int(input("Collor red:\n"))
         g = int(input("Collor green:\n"))
@@ -267,7 +265,7 @@ while True:
 
         darkfield(17,g,r,b,d)
  
-        img = picture(code[0])
+        img = take_picture(code[0])
         
         motion(M_F, M_R, M_S, sf, sr, 'f') #forward
         time.sleep(2)

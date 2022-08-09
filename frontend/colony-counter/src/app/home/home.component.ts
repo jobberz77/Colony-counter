@@ -33,20 +33,29 @@ export class HomeComponent implements OnInit {
 	constructor(private backendService: BackendService) { }
 
 	ngOnInit(): void {
-		// TODO: Move this one to a method where the call for inserting the image is done.
-		this.backendService.getImage().subscribe(countResult => {
-			this.calculatedCount = countResult.count;
-			this.imageCountModel = countResult;
+		// TODO: Eerst een placeholder image assignen aan de canvas. en de initializeCanvas aanroepen
+		this.initializeCanvas();
 
-			this.initializeCanvas();
-		});
+		// TODO: Move this one to a method where the call for inserting the image is done.
+		// this.backendService.getImage().subscribe(countResult => {
+		// 	this.calculatedCount = countResult.count;
+		// 	this.imageCountModel = countResult;
+
+		// 	this.initializeCanvas();
+		// });
 	}
 
 	initializeCanvas() {
-		this.canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
-		this.canvasContext = this.canvasElement.getContext("2d");
+		// Set placeholder image
+		this.backendService.getPlaceholderImage().subscribe(placeholder => {
+			this.imageCountModel = new CountResultModel();
+			this.imageCountModel.base64_image = placeholder;
 
-		this.drawOnImage();
+			this.canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
+			this.canvasContext = this.canvasElement.getContext("2d");
+	
+			this.drawOnImage();
+		});
 	}
 
 	openSettingsModal() {
@@ -100,7 +109,7 @@ export class HomeComponent implements OnInit {
 		};
 
 		this.image = new Image();
-		this.image.src = 'data:image/png;base64,' + this.imageCountModel.base64_image;
+		this.image.src = this.addBase64PrefixIfNeeded(this.imageCountModel.base64_image);
 		this.image.width = 1153;
 		this.image.height = 865;
 		this.image.onload = function () {
@@ -119,10 +128,20 @@ export class HomeComponent implements OnInit {
 	}
 
 	saveImageCount() {
-		var countResult = this.canvasElement.toDataURL("image/jpeg").split(';base64,')[1];
+		var countResult = this.canvasElement.toDataURL("image/jpg").split(';base64,')[1];
 
 		this.imageCountModel.base64_image = countResult;
 		this.backendService.saveImage(this.imageCountModel);
 	}
 
+	addBase64PrefixIfNeeded(base64Value: string) {
+		console.log(base64Value);
+
+		if (!base64Value.startsWith('data:image/jpg;base64,')) {
+			return 'data:image/jpg;base64,' + base64Value;
+		}
+		return base64Value;
+	}
+
 }
+ 
