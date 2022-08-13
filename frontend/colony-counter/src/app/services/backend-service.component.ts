@@ -18,7 +18,7 @@ export class BackendService {
   getPlaceholderImage(): Observable<string> {
     return this.http.get('../../assets/images/placeholder_image_base64.txt', {responseType: 'text'});
   }
- 
+  
   swallowContainerAndGetResultingImage(): Observable<CountResultModel> {
     return this.http.get<CountResultModel>(`${API_URL}/swallow_container_and_return_image`);
   }

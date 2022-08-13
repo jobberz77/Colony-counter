@@ -6,6 +6,7 @@
         <!-- <button mat-icon-tune class="icon-button" (click)="openSettingsModal()">
             <mat-icon>tune</mat-icon>
         </button> -->
+        <button type="button" class="btn btn-success save-button" (click)="startCycle()">Start</button>
     </mat-toolbar>
 </div>
 
@@ -22,14 +23,14 @@
                 </div>
                 <div class="col-4 current-count">
                     <p>Totaal:</p>
-                    <p class="current-count-number">{{imageCountModel?.count}}</p>
+                    <p class="current-count-number">{{coundResultModel?.count}}</p>
                 </div>
             </div>
 
             <div class="row mx-auto align-items-end action-buttons">
                 <div class="col-12 d-flex justify-content-end">
-                    <button type="button" class="btn btn-success save-button" (click)="saveImageCount()">Opslaan</button>
-                    <button id="undoButton" type="button" class="btn btn-warning undo-button" (click)="undoLastCount()">
+                    <button type="button" class="btn btn-success save-button" [disabled]="disableCountButtons" (click)="saveImageCount()">Opslaan</button>
+                    <button id="undoButton" type="button" class="btn btn-warning undo-button" [disabled]="disableCountButtons" (click)="undoLastCount()">
                         <mat-icon class="refresh-icon">refresh</mat-icon>
                     </button>
                 </div>
@@ -43,7 +44,7 @@
             <div>
                 <canvas
                   id="canvas"
-                  width="1153"
+                  width="1450"
                   height="865"
                   style="padding: 0"
                 ></canvas>

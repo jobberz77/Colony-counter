@@ -17,45 +17,55 @@ export class HomeComponent implements OnInit {
 	canvasElement: HTMLCanvasElement;
 	canvasContext: CanvasRenderingContext2D;
 	image: HTMLImageElement;
-	imageWidth: 1532;
-	imageHeight: 1152;
+	imageWidth: 1450;
+	imageHeight: 865;
 	drawSize = 8;
 	drawColor = 'red';
 
 	// Counting variables
-	imageCountModel: CountResultModel;
-
+	coundResultModel: CountResultModel;
 	countList: Array<CountModel> = new Array<CountModel>();
-	totalCount: number = 58;
 	manualCount: number = 0;
 	calculatedCount: number = 0;
+
+	// UI state variables
+	disableCountButtons: boolean = true;
+	drawingIsDisabled: boolean = true;
 
 	constructor(private backendService: BackendService) { }
 
 	ngOnInit(): void {
-		// TODO: Eerst een placeholder image assignen aan de canvas. en de initializeCanvas aanroepen
 		this.initializeCanvas();
-
-		// TODO: Move this one to a method where the call for inserting the image is done.
-		// this.backendService.getImage().subscribe(countResult => {
-		// 	this.calculatedCount = countResult.count;
-		// 	this.imageCountModel = countResult;
-
-		// 	this.initializeCanvas();
-		// });
 	}
 
-	initializeCanvas() {
-		// Set placeholder image
-		this.backendService.getPlaceholderImage().subscribe(placeholder => {
-			this.imageCountModel = new CountResultModel();
-			this.imageCountModel.base64_image = placeholder;
+	startCycle() {
+		// this.backendService.swallowContainerAndGetResultingImage().subscribe(result => {
+		// 	this.calculatedCount = result.count;
+		// 	this.coundResultModel = result;
 
-			this.canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
-			this.canvasContext = this.canvasElement.getContext("2d");
-	
+		// 	this.disableCountButtons = false;
+		// });
+		this.backendService.getImage().subscribe(result => {
+			this.calculatedCount = result.count;
+			this.coundResultModel = result;
+
+			this.disableCountButtons = false;
+			this.drawingIsDisabled = false;
+
 			this.drawOnImage();
 		});
+	}
+
+	endCycle() {
+		//TODO Hier even kijken of we iets met de saveImage() kunnen
+	}
+
+	// Set up canvas and insert the placeholder image
+	initializeCanvas() {
+		this.imageWidth = 1450;
+		this.imageHeight = 865;
+
+		this.setPlaceholderImage();
 	}
 
 	openSettingsModal() {
@@ -72,13 +82,13 @@ export class HomeComponent implements OnInit {
 			this.countList.pop();
 			this.decrementCount();
 
-			this.resetCount();
+			this.redrawCount();
 		}
 	}
 
-	resetCount() {
+	redrawCount() {
 		this.canvasContext.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
-		this.canvasContext.drawImage(this.image, 0, 0, 1153, 865);
+		this.canvasContext.drawImage(this.image, 0, 0, this.imageWidth, this.imageHeight);
 
 		this.countList.forEach(count =>{
 			this.canvasContext.beginPath();
@@ -92,16 +102,18 @@ export class HomeComponent implements OnInit {
 		var self = this;
 
 		this.canvasElement.onmousedown = (e) => {
-			this.canvasContext.beginPath();
-			this.canvasContext.lineWidth = this.drawSize;
-			this.canvasContext.strokeStyle = this.drawColor;
-			this.canvasContext.lineJoin = "round";
-			this.canvasContext.lineCap = "round";
-			this.canvasContext.moveTo(e.clientX - 384, e.clientY - 64);
-			this.canvasContext.lineTo(e.clientX - 384, e.clientY - 64);
-			this.canvasContext.stroke();
-
-			this.addCount(e.clientX  - 384, e.clientY - 64);
+			if (!this.drawingIsDisabled) {
+				this.canvasContext.beginPath();
+				this.canvasContext.lineWidth = this.drawSize;
+				this.canvasContext.strokeStyle = this.drawColor;
+				this.canvasContext.lineJoin = "round";
+				this.canvasContext.lineCap = "round";
+				this.canvasContext.moveTo(e.clientX - 384, e.clientY - 64);
+				this.canvasContext.lineTo(e.clientX - 384, e.clientY - 64);
+				this.canvasContext.stroke();
+	
+				this.addCount(e.clientX  - 384, e.clientY - 64);
+			}
 		};
 
 		this.canvasElement.onmouseup = function () {
@@ -109,34 +121,57 @@ export class HomeComponent implements OnInit {
 		};
 
 		this.image = new Image();
-		this.image.src = this.addBase64PrefixIfNeeded(this.imageCountModel.base64_image);
-		this.image.width = 1153;
-		this.image.height = 865;
+		this.image.src = this.addBase64PrefixIfNeeded(this.coundResultModel.base64_image);
+		this.image.width = this.imageWidth;
+		this.image.height = this.imageHeight;
 		this.image.onload = function () {
-			self.canvasContext.drawImage(self.image, 0, 0, 1153, 865);
+			self.canvasContext.drawImage(self.image, 0, 0, self.imageWidth, self.imageHeight);
 		}
 	}
 
 	incrementCount() {
 		this.manualCount++;
-		this.imageCountModel.count++;
+		this.coundResultModel.count++;
 	}
 
 	decrementCount() {
 		this.manualCount--;
-		this.imageCountModel.count--;
+		this.coundResultModel.count--;
+	}
+
+	resetCount() {
+		this.manualCount = 0;
+		this.calculatedCount = 0;
+		this.coundResultModel = new CountResultModel();
+		this.countList = [];
 	}
 
 	saveImageCount() {
 		var countResult = this.canvasElement.toDataURL("image/jpg").split(';base64,')[1];
 
-		this.imageCountModel.base64_image = countResult;
-		this.backendService.saveImage(this.imageCountModel);
+		this.coundResultModel.base64_image = countResult;
+		this.backendService.saveImage(this.coundResultModel);
+
+		this.setPlaceholderImage();
+		this.resetCount();
+	}
+
+	setPlaceholderImage() {
+		this.drawingIsDisabled = true;
+		this.disableCountButtons = true;
+
+		this.backendService.getPlaceholderImage().subscribe(placeholder => {
+			this.coundResultModel = new CountResultModel();
+			this.coundResultModel.base64_image = placeholder;
+
+			this.canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
+			this.canvasContext = this.canvasElement.getContext("2d");
+	
+			this.drawOnImage();
+		});
 	}
 
 	addBase64PrefixIfNeeded(base64Value: string) {
-		console.log(base64Value);
-
 		if (!base64Value.startsWith('data:image/jpg;base64,')) {
 			return 'data:image/jpg;base64,' + base64Value;
 		}
@@ -144,4 +179,3 @@ export class HomeComponent implements OnInit {
 	}
 
 }
- 
