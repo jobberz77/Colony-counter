@@ -108,11 +108,11 @@ export class HomeComponent implements OnInit {
 				this.canvasContext.strokeStyle = this.drawColor;
 				this.canvasContext.lineJoin = "round";
 				this.canvasContext.lineCap = "round";
-				this.canvasContext.moveTo(e.clientX - 384, e.clientY - 64);
-				this.canvasContext.lineTo(e.clientX - 384, e.clientY - 64);
+				this.canvasContext.moveTo(e.clientX - 480, e.clientY - 64);
+				this.canvasContext.lineTo(e.clientX - 480, e.clientY - 64);
 				this.canvasContext.stroke();
 	
-				this.addCount(e.clientX  - 384, e.clientY - 64);
+				this.addCount(e.clientX  - 480, e.clientY - 64);
 			}
 		};
 
