@@ -184,12 +184,12 @@ def swallow_container_and_return_image():
         motion(M_F, M_R, M_S, sf, sr, 'f') #forward
 
         #TODO hebben we deze wel nodig? Wait is hier altijd true en waarom willen we de knop nogmaals indrukken?
-        while wait:
-            if GPIO.input(start) == 1:
-                wait = False
+        # while wait:
+        #     if GPIO.input(start) == 1:
+        #         wait = False
 
-                print("thanks")
-        wait = True
+        #         print("thanks")
+        # wait = True
 
         motion(M_F, M_R, M_S, sf, sr, 'r') #backward 
 
