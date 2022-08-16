@@ -46,7 +46,7 @@ def save_result_and_push_out_container():
 @app.route('/get_image')
 def get_image():
     try:
-        raise Exception('QR_CODE')
+        # raise Exception('QR_CODE')
         image_path = './assets/images/colony_with_count.jpg' # point to your image location
         base64_image = get_response_image(image_path)
         
@@ -77,10 +77,12 @@ def save_count_result():
     
     return jsonify('Success')
 
-@app.route('/end_cycle_prematurely', methods=['POST'])
+@app.route('/end_cycle_prematurely')
 def end_cycle_prematurely():
     print('#TODO: Checken of er nog extra dingen gereset moeten worden oid')
     # machine_actions.push_out_container()
+    
+    return jsonify('Success')
 
 def build_image_name(count, serialnumber):
     return f'results/{count:.0f} -- {serialnumber}.jpg'     

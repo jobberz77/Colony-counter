@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
 	drawColor = 'red';
 
 	// Counting variables
-	coundResultModel: CountResultModel;
+	countResultModel: CountResultModel;
 	countList: Array<CountModel> = new Array<CountModel>();
 	manualCount: number = 0;
 	calculatedCount: number = 0;
@@ -45,9 +45,12 @@ export class HomeComponent implements OnInit {
 
 		// 	this.disableCountButtons = false;
 		// });
+
+		this.setLoadingImage();
+		
 		this.backendService.getImage().subscribe(result => {
 			this.calculatedCount = result.count;
-			this.coundResultModel = result;
+			this.countResultModel = result;
 
 			this.disableCountButtons = false;
 			this.drawingIsDisabled = false;
@@ -58,11 +61,13 @@ export class HomeComponent implements OnInit {
 			if (err.error[0] === 'QR_CODE') {
 				alert('QR code kon niet gescand worden. Plaats het bakje opnieuw op het plateau en zorg dat de QR code aan de goede kant staat.');
 			}
+
+			this.backendService.endCyclePrematurely();
 		});
 	}
 
 	endCycle() {
-		//TODO Hier even kijken of we iets met de saveImage() kunnen
+		this.backendService.saveImage(this.countResultModel);
 	}
 
 	// Set up canvas and insert the placeholder image
@@ -126,7 +131,7 @@ export class HomeComponent implements OnInit {
 		};
 
 		this.image = new Image();
-		this.image.src = this.addBase64PrefixIfNeeded(this.coundResultModel.base64_image);
+		this.image.src = this.addBase64PrefixIfNeeded(this.countResultModel.base64_image);
 		this.image.width = this.imageWidth;
 		this.image.height = this.imageHeight;
 		this.image.onload = function () {
@@ -136,26 +141,26 @@ export class HomeComponent implements OnInit {
 
 	incrementCount() {
 		this.manualCount++;
-		this.coundResultModel.count++;
+		this.countResultModel.count++;
 	}
 
 	decrementCount() {
 		this.manualCount--;
-		this.coundResultModel.count--;
+		this.countResultModel.count--;
 	}
 
 	resetCount() {
 		this.manualCount = 0;
 		this.calculatedCount = 0;
-		this.coundResultModel = new CountResultModel();
+		this.countResultModel = new CountResultModel();
 		this.countList = [];
 	}
 
 	saveImageCount() {
 		var countResult = this.canvasElement.toDataURL("image/jpg").split(';base64,')[1];
 
-		this.coundResultModel.base64_image = countResult;
-		this.backendService.saveImage(this.coundResultModel);
+		this.countResultModel.base64_image = countResult;
+		this.backendService.saveImage(this.countResultModel);
 
 		this.setPlaceholderImage();
 		this.resetCount();
@@ -166,8 +171,19 @@ export class HomeComponent implements OnInit {
 		this.disableCountButtons = true;
 
 		this.backendService.getPlaceholderImage().subscribe(placeholder => {
-			this.coundResultModel = new CountResultModel();
-			this.coundResultModel.base64_image = placeholder;
+			this.countResultModel = new CountResultModel();
+			this.countResultModel.base64_image = placeholder;
+
+			this.canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
+			this.canvasContext = this.canvasElement.getContext("2d");
+	
+			this.drawOnImage();
+		});
+	}
+
+	setLoadingImage() {
+		this.backendService.getLoadingImage().subscribe(loadingImage => {
+			this.countResultModel.base64_image = loadingImage;
 
 			this.canvasElement = document.getElementById("canvas") as HTMLCanvasElement;
 			this.canvasContext = this.canvasElement.getContext("2d");

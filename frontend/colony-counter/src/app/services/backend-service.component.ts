@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { count, Observable, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { API_URL } from '../env';
 import { CountResultModel } from '../entities/count-result.model';
 
@@ -15,14 +15,13 @@ export class BackendService {
     return this.http.get<CountResultModel>(`${API_URL}/get_image`);
   }
 
-  getPlaceholderImage(): Observable<string> {
-    return this.http.get('../../assets/images/placeholder_image_base64.txt', {responseType: 'text'});
-  }
-  
   swallowContainerAndGetResultingImage(): Observable<CountResultModel> {
     return this.http.get<CountResultModel>(`${API_URL}/swallow_container_and_return_image`);
   }
   
+  endCyclePrematurely() {
+    this.http.get<any>(`${API_URL}/end_cycle_prematurely`).subscribe();
+  }
 
   saveImage(countResultModel: CountResultModel) {
     let request = this.http.post<any>(`${API_URL}/save_image`, 
@@ -36,6 +35,15 @@ export class BackendService {
       console.log(data)
     });
   }
+
+  getPlaceholderImage(): Observable<string> {
+    return this.http.get('../../assets/images/placeholder_image_base64.txt', {responseType: 'text'});
+  }
+  
+  getLoadingImage(): Observable<string> {
+    return this.http.get('../../assets/images/loading_image_base64.txt', {responseType: 'text'});
+  }
+  
 
   private static _handleError(err: HttpErrorResponse | any) {
     return throwError(() => err.message || 'Error: Unable to complete request.');
