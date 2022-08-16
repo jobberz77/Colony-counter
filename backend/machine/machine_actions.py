@@ -1,7 +1,9 @@
+import base64
 from tkinter import image_types
 import RPi.GPIO as GPIO
 import cv2
 import board
+from ..entities.count_result_model import CountResult
 import neopixel
 import time
 import serial
@@ -113,20 +115,20 @@ def scan_qr_code():
     code = code[1]
     if code == "'":
         check = False
-        print('No object')
+        raise Exception('QR_CODE')
     else:
         print(code)
-    qr_code = [code, check]
-    return qr_code
+    return code
 
 # counts and returns the image and the count
-def calculate_count_and_return_image_and_count(img, qr_code):
+def calculate_count_and_return_image_and_count(img):
     # Read image. 
     #os.chdir(os.path.dirname(os.path.abspath(__file__)))
     #img = cv2.imread(image, cv2.IMREAD_COLOR)
 
     print('original dimensions : ',img.shape)
 
+    #TODO Hier de scale aanpassen aan de canvas afmetingen
     scale_precent = 100 / 100
     width = int(img.shape[1] * scale_precent)
     height = int(img.shape[0] * scale_precent)
@@ -169,7 +171,7 @@ def calculate_count_and_return_image_and_count(img, qr_code):
     return img, amount
 
 
-def swallow_container_and_return_image():
+def swallow_container_and_return_countresult():
     GPIO.output(start_led, 0)
     run = False
     wait = True
@@ -203,25 +205,26 @@ def swallow_container_and_return_image():
 
         darkfield(17,g,r,b,d)
 
-        img = take_picture(code[0])
+        img = take_picture(code)
         
         motion(M_F, M_R, M_S, sf, sr, 'f') #forward
         time.sleep(2)
 
         # result is a tuple (img, amount)
-        result = calculate_count_and_return_image_and_count(img, code[0])
+        result = calculate_count_and_return_image_and_count(img)
         
-        return result
+        response = CountResult(base64.b64encode(result[0]), result[1], code)
+        
+        return response
 
 
 def push_out_container():
     #TODO Hebben we deze wait hier uberhaupt wel nodig aangezien we m zelf aanroepen vanuit front-end?
-    #TODO wachten totdat de start knop opnieuw gepusht is, daarna door? Waarom?
-        while wait:
-            if GPIO.input(start) == 1:
-                wait = False
+        # while wait:
+        #     if GPIO.input(start) == 1:
+        #         wait = False
 
-        wait = True
+        # wait = True
         
         # bakje terug naar buiten
         motion(M_F, M_R, M_S, sf, sr, 'r') #backward
@@ -232,60 +235,60 @@ def push_out_container():
         GPIO.output(start_led, 0)
     
 #TODO Moeten we deze nog weghalen? -> Ja
-while True:
-    GPIO.output(start_led, 0)
-    run = False
-    wait = True
+# while True:
+#     GPIO.output(start_led, 0)
+#     run = False
+#     wait = True
 
-    # Als de start knop ingedrukt wordt
-    if GPIO.input(start) == 1:
-            run = True
-            GPIO.output(start_led, 1)
-            print("start")
+#     # Als de start knop ingedrukt wordt
+#     if GPIO.input(start) == 1:
+#             run = True
+#             GPIO.output(start_led, 1)
+#             print("start")
     
-    while run:
-        motion(M_F, M_R, M_S, sf, sr, 'f') #forward
+#     while run:
+#         motion(M_F, M_R, M_S, sf, sr, 'f') #forward
 
-        #TODO hebben we deze wel nodig? Wait is hier altijd true en waarom willen we de knop nogmaals indrukken?
-        while wait:
-            if GPIO.input(start) == 1:
-                wait = False
+#         #TODO hebben we deze wel nodig? Wait is hier altijd true en waarom willen we de knop nogmaals indrukken?
+#         while wait:
+#             if GPIO.input(start) == 1:
+#                 wait = False
 
-                print("thanks")
-        wait = True
+#                 print("thanks")
+#         wait = True
 
-        motion(M_F, M_R, M_S, sf, sr, 'r') #backward 
+#         motion(M_F, M_R, M_S, sf, sr, 'r') #backward 
 
-        code = scan_qr_code()
+#         code = scan_qr_code()
         
-        r = int(input("Collor red:\n"))
-        g = int(input("Collor green:\n"))
-        b = int(input("Collor blue:\n"))
-        d = int(input("intensity:\n"))
+#         r = int(input("Collor red:\n"))
+#         g = int(input("Collor green:\n"))
+#         b = int(input("Collor blue:\n"))
+#         d = int(input("intensity:\n"))
 
-        darkfield(17,g,r,b,d)
+#         darkfield(17,g,r,b,d)
  
-        img = take_picture(code[0])
+#         img = take_picture(code[0])
         
-        motion(M_F, M_R, M_S, sf, sr, 'f') #forward
-        time.sleep(2)
+#         motion(M_F, M_R, M_S, sf, sr, 'f') #forward
+#         time.sleep(2)
 
-        calculate_count_and_return_image_and_count(img, code[0])
+#         calculate_count_and_return_image_and_count(img, code[0])
 
-        #TODO wachten totdat de start knop opnieuw gepusht is, daarna door?
-        while wait:
-            if GPIO.input(start) == 1:
-                wait = False
+#         #TODO wachten totdat de start knop opnieuw gepusht is, daarna door?
+#         while wait:
+#             if GPIO.input(start) == 1:
+#                 wait = False
 
-        wait = True
+#         wait = True
         
-        # bakje terug naar buiten
-        motion(M_F, M_R, M_S, sf, sr, 'r') #backward
-        time.sleep(2)
+#         # bakje terug naar buiten
+#         motion(M_F, M_R, M_S, sf, sr, 'r') #backward
+#         time.sleep(2)
 
-        run = False
-        print("stop")
-        GPIO.output(start_led, 0)
+#         run = False
+#         print("stop")
+#         GPIO.output(start_led, 0)
 
 
 

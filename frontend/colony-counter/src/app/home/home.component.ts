@@ -53,6 +53,11 @@ export class HomeComponent implements OnInit {
 			this.drawingIsDisabled = false;
 
 			this.drawOnImage();
+		},
+		err => {
+			if (err.error[0] === 'QR_CODE') {
+				alert('QR code kon niet gescand worden. Plaats het bakje opnieuw op het plateau en zorg dat de QR code aan de goede kant staat.');
+			}
 		});
 	}
 
