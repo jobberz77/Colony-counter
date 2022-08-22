@@ -8,15 +8,10 @@ from entities.count_result_model import CountResult
 from entities.count_result_schema import CountResultSchema
 import io
 
-# from machine import machine_actions
+from machine import machine_actions
 
 app = Flask(__name__)
 CORS(app)
-
-@app.route('/hans', methods=['GET'])
-
-def root():
-    return jsonify("Hello world")
 
 def get_response_image(image_path):
     pil_img = Image.open(image_path, mode='r') # reads the PIL image
@@ -28,8 +23,9 @@ def get_response_image(image_path):
 @app.route('/swallow_container_and_return_image')
 def swallow_container_and_return_image():
     try:
+        print('Arrived in backend')
         # result is a CountResult
-        # result = machine_actions.swallow_container_and_return_countresult()
+        result = machine_actions.swallow_container_and_return_countresult()
         
         schema = CountResultSchema(many=False)
         resultSchema = schema.dump(result)
@@ -71,7 +67,7 @@ def save_count_result():
         with open(build_image_name(result.count, result.serialnumber), "wb") as fh:
             fh.write(base64.b64decode((result.base64_image)))
             
-        # machine_actions.push_out_container()
+        machine_actions.push_out_container()
     except Exception as e: 
         return jsonify(e, 400)
     
@@ -80,12 +76,12 @@ def save_count_result():
 @app.route('/end_cycle_prematurely')
 def end_cycle_prematurely():
     print('#TODO: Checken of er nog extra dingen gereset moeten worden oid')
-    # machine_actions.push_out_container()
+    machine_actions.push_out_container()
     
     return jsonify('Success')
 
 def build_image_name(count, serialnumber):
-    return f'results/{count:.0f} -- {serialnumber}.jpg'     
+    return f"results/{count:.0f} -- {serialnumber}.jpg"     
 
 if __name__=="__main__":
     app.run()

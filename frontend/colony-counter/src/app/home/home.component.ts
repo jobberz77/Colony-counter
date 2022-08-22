@@ -48,7 +48,9 @@ export class HomeComponent implements OnInit {
 
 		this.setLoadingImage();
 
-		this.backendService.getImage().subscribe(result => {
+		this.backendService.swallowContainerAndGetResultingImage().subscribe(result => {
+			console.log(result)
+
 			this.calculatedCount = result.count;
 			this.countResultModel = result;
 

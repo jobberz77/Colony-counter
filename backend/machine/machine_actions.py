@@ -3,7 +3,7 @@ from tkinter import image_types
 import RPi.GPIO as GPIO
 import cv2
 import board
-from ..entities.count_result_model import CountResult
+from entities.count_result_model import CountResult
 import neopixel
 import time
 import serial
@@ -130,12 +130,18 @@ def calculate_count_and_return_image_and_count(img):
 
     #TODO Hier de scale aanpassen aan de canvas afmetingen
     scale_precent = 100 / 100
-    width = int(img.shape[1] * scale_precent)
-    height = int(img.shape[0] * scale_precent)
+    # width = int(img.shape[1] * scale_precent)
+    # height = int(img.shape[0] * scale_precent)
+    width = 1450
+    height = 865
     dim = (width, height)
 
     img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
     
+    cv2.imwrite('/home/pi/Desktop/_original' +'.png', img)
+
+    print('dimensions after resize: ', img.shape)
+
     # Convert to grayscale. 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
     
@@ -172,8 +178,7 @@ def calculate_count_and_return_image_and_count(img):
 
 
 def swallow_container_and_return_countresult():
-    GPIO.output(start_led, 0)
-    run = False
+    # GPIO.output(start_led, 0)
     wait = True
 
     # Als de start knop ingedrukt wordt -> Deze willen we waarschijnlijk niet doen
@@ -182,39 +187,42 @@ def swallow_container_and_return_countresult():
     #         GPIO.output(start_led, 1)
     #         print("start")
     
-    while run:
+    while True:
         motion(M_F, M_R, M_S, sf, sr, 'f') #forward
 
         #TODO hebben we deze wel nodig? Wait is hier altijd true en waarom willen we de knop nogmaals indrukken?
-        # while wait:
-        #     if GPIO.input(start) == 1:
-        #         wait = False
+        while wait:
+            if GPIO.input(start) == 1:
+                wait = False
 
-        #         print("thanks")
-        # wait = True
+                print("thanks")
+        wait = True
 
         motion(M_F, M_R, M_S, sf, sr, 'r') #backward 
 
         code = scan_qr_code()
         
         #TODO Read in the values defined in the settings here
-        r = 120
-        g = 160
-        b = 80
-        d = 80
+        r = 50
+        g = 50
+        b = 50
+        d = 50
+
+        print('reached darkfield')
 
         darkfield(17,g,r,b,d)
 
+        print('reached photo')
         img = take_picture(code)
         
-        motion(M_F, M_R, M_S, sf, sr, 'f') #forward
-        time.sleep(2)
+        # motion(M_F, M_R, M_S, sf, sr, 'f') #forward
+        # time.sleep(2)
 
         # result is a tuple (img, amount)
         result = calculate_count_and_return_image_and_count(img)
         
-        response = CountResult(base64.b64encode(result[0]), result[1], code)
-        
+        # response = CountResult(base64.b64encode(result[0]), result[1], code)
+        response = CountResult(result[0], result[1], code)
         return response
 
 
