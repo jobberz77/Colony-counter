@@ -138,7 +138,7 @@ def calculate_count_and_return_image_and_count(img):
 
     img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
     
-    cv2.imwrite('/home/pi/Desktop/_original' +'.png', img)
+    cv2.imwrite('/home/pi/Desktop/_original' +'.jpg', img)
 
     print('dimensions after resize: ', img.shape)
 
@@ -173,9 +173,14 @@ def calculate_count_and_return_image_and_count(img):
             
             amount += 1
 
+    cv2.imwrite('/home/pi/Desktop/_result' +'.jpg', img)
     # return image and amount
     return img, amount
 
+def convert_cv2_image_to_base64(image):
+    retval, buffer = cv2.imencode('.jpg', image)
+    base64_image = base64.b64encode(buffer)
+    return base64_image
 
 def swallow_container_and_return_countresult():
     # GPIO.output(start_led, 0)
@@ -221,8 +226,7 @@ def swallow_container_and_return_countresult():
         # result is a tuple (img, amount)
         result = calculate_count_and_return_image_and_count(img)
         
-        # response = CountResult(base64.b64encode(result[0]), result[1], code)
-        response = CountResult(result[0], result[1], code)
+        response = CountResult(convert_cv2_image_to_base64(result[0]), result[1], code)
         return response
 
 
@@ -235,7 +239,7 @@ def push_out_container():
         # wait = True
         
         # bakje terug naar buiten
-        motion(M_F, M_R, M_S, sf, sr, 'r') #backward
+        motion(M_F, M_R, M_S, sf, sr, 'f') #backward
         time.sleep(2)
 
         run = False

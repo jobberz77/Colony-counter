@@ -39,13 +39,6 @@ export class HomeComponent implements OnInit {
 	}
 
 	startCycle() {
-		// this.backendService.swallowContainerAndGetResultingImage().subscribe(result => {
-		// 	this.calculatedCount = result.count;
-		// 	this.countResultModel = result;
-
-		// 	this.disableCountButtons = false;
-		// });
-
 		this.setLoadingImage();
 
 		this.backendService.swallowContainerAndGetResultingImage().subscribe(result => {

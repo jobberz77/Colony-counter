@@ -34,10 +34,6 @@ def swallow_container_and_return_image():
         return jsonify(e.args), status.HTTP_400_BAD_REQUEST 
     
     return jsonify(resultSchema)
-    
-@app.route('/save_result_and_push_out_container')
-def save_result_and_push_out_container():
-    print('save_result_and_push_out_container')
 
 @app.route('/get_image')
 def get_image():
@@ -57,12 +53,13 @@ def get_image():
     return jsonify(resultSchema) # send the result to client
     
 @app.route('/save_image', methods=['POST'])
-def save_count_result():
+def save_result_and_push_out_container():
     try: 
         saved_count_result = CountResultSchema().load(request.get_json())
-        
+
         result = CountResult(**saved_count_result)
         
+        print('name', result.count, result.serialnumber[:-3])
         #save result to disk
         with open(build_image_name(result.count, result.serialnumber), "wb") as fh:
             fh.write(base64.b64decode((result.base64_image)))
@@ -81,7 +78,7 @@ def end_cycle_prematurely():
     return jsonify('Success')
 
 def build_image_name(count, serialnumber):
-    return f"results/{count:.0f} -- {serialnumber}.jpg"     
+    return f"results/{count:.0f}--{serialnumber}.jpg"     
 
 if __name__=="__main__":
     app.run()
