@@ -90,7 +90,6 @@ def save_result_and_push_out_container():
 
 @app.route('/end_cycle_prematurely')
 def end_cycle_prematurely():
-    print('#TODO: Checken of er nog extra dingen gereset moeten worden oid')
     machine_actions.push_out_container()
     
     return jsonify('Success')

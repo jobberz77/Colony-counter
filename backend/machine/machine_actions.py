@@ -178,16 +178,13 @@ def swallow_container_and_return_countresult():
     code = scan_qr_code()
     
     #TODO Read in the values defined in the settings here
-    r = 150
-    g = 90
-    b = 70
-    d = 10
-
-    print('reached darkfield')
+    r = 80
+    g = 50
+    b = 40
+    d = 5
 
     darkfield(17,g,r,b,d)
 
-    print('reached photo')
     img = take_picture(code)
     
     # result is a tuple (img, amount)
@@ -202,17 +199,9 @@ def push_out_container():
         motion(M_F, M_R, M_S, sf, sr, 'f') #backward
         time.sleep(2)
 
-        run = False
-        print("stop")
-        GPIO.output(start_led, 0)
-
 def push_in_container():
         # bakje terug naar binnen
         motion(M_F, M_R, M_S, sf, sr, 'r') #backward
         time.sleep(2)
-
-        run = False
-        print("stop")
-        GPIO.output(start_led, 0)
 
 

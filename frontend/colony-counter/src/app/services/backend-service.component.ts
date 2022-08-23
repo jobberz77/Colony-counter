@@ -19,10 +19,6 @@ export class BackendService {
     this.http.get<any>(`${API_URL}/shutdown`).subscribe();
   }
 
-  getImage(): Observable<CountResultModel> {
-    return this.http.get<CountResultModel>(`${API_URL}/get_image`);
-  }
-
   swallowContainerAndGetResultingImage(): Observable<CountResultModel> {
     return this.http.get<CountResultModel>(`${API_URL}/swallow_container_and_return_image`);
   }
@@ -39,9 +35,7 @@ export class BackendService {
       "serialnumber": countResultModel.serialnumber 
     });
 
-    request.subscribe((data) => {
-      console.log(data)
-    });
+    request.subscribe();
   }
 
   getPlaceholderImage(): Observable<string> {
