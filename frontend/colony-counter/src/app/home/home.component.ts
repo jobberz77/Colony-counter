@@ -32,17 +32,29 @@ export class HomeComponent implements OnInit {
 	disableCountButtons: boolean = true;
 	drawingIsDisabled: boolean = true;
 
+	isWorking = false;
+
 	constructor(private backendService: BackendService) { }
 
 	ngOnInit(): void {
 		this.initializeCanvas();
 	}
 
+	getPlateau() {
+		this.backendService.getPlateau();
+	}
+
+	shutdown() {
+		this.isWorking = false;
+		this.backendService.shutdown();
+	}
+
+
 	startCycle() {
+		this.isWorking = true;
 		this.setLoadingImage();
 
 		this.backendService.swallowContainerAndGetResultingImage().subscribe(result => {
-			console.log(result)
 
 			this.calculatedCount = result.count;
 			this.countResultModel = result;
@@ -61,8 +73,23 @@ export class HomeComponent implements OnInit {
 		});
 	}
 
-	endCycle() {
+	stopCyclePrematurely() {
+		this.setPlaceholderImage();
+		this.resetCount();
+		this.isWorking = false;
+
+		this.backendService.getPlateau();
+	}
+
+	endCycleAndSaveImage() {
+		var countResult = this.canvasElement.toDataURL("image/jpg").split(';base64,')[1];
+
+		this.countResultModel.base64_image = countResult;
 		this.backendService.saveImage(this.countResultModel);
+
+		this.setPlaceholderImage();
+		this.resetCount();
+		this.isWorking = false;
 	}
 
 	// Set up canvas and insert the placeholder image
@@ -149,16 +176,6 @@ export class HomeComponent implements OnInit {
 		this.calculatedCount = 0;
 		this.countResultModel = new CountResultModel();
 		this.countList = [];
-	}
-
-	saveImageCount() {
-		var countResult = this.canvasElement.toDataURL("image/jpg").split(';base64,')[1];
-
-		this.countResultModel.base64_image = countResult;
-		this.backendService.saveImage(this.countResultModel);
-
-		this.setPlaceholderImage();
-		this.resetCount();
 	}
 
 	setPlaceholderImage() {

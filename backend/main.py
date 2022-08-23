@@ -25,7 +25,6 @@ def get_response_image(image_path):
 @app.route('/swallow_container_and_return_image')
 def swallow_container_and_return_image():
     try:
-        print('Arrived in backend')
         # result is a CountResult
         result = machine_actions.swallow_container_and_return_countresult()
         
@@ -36,6 +35,19 @@ def swallow_container_and_return_image():
         return jsonify(e.args), status.HTTP_400_BAD_REQUEST 
     
     return jsonify(resultSchema)
+
+@app.route('/get_plateau')
+def get_plateau():
+    machine_actions.push_out_container()
+
+    return jsonify('Success')
+
+@app.route('/shutdown')
+def shutdown():
+    machine_actions.push_in_container()
+
+    return jsonify('Success')
+
 
 @app.route('/get_image')
 def get_image():

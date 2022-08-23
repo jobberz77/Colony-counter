@@ -11,6 +11,14 @@ export class BackendService {
   constructor(private http: HttpClient) {
   }
 
+  getPlateau() {
+    this.http.get<any>(`${API_URL}/get_plateau`).subscribe();
+  }
+
+  shutdown() {
+    this.http.get<any>(`${API_URL}/shutdown`).subscribe();
+  }
+
   getImage(): Observable<CountResultModel> {
     return this.http.get<CountResultModel>(`${API_URL}/get_image`);
   }
