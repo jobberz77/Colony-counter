@@ -3,9 +3,7 @@
     <mat-toolbar>
         <span>Colony Counter</span>
         <span class="header-spacer"></span>
-        <!-- <button mat-icon-tune class="icon-button" (click)="openSettingsModal()">
-            <mat-icon>tune</mat-icon>
-        </button> -->
+
         <button *ngIf="!isWorking" type="button" class="btn btn-light save-button" (click)="getPlateau()" style="padding-right: 10px">Opstarten</button>
         <button *ngIf="!isWorking" type="button" class="btn btn-warning save-button" (click)="shutdown()" style="padding-right: 10px">Afsluiten</button>
         <button *ngIf="!isWorking" type="button" class="btn btn-success save-button" (click)="startCycle()">Begin</button>
@@ -30,6 +28,18 @@
                     <p class="current-count-number">{{countResultModel?.count}}</p>
                 </div>
             </div>
+
+            <div class="row mx-auto slider-window">
+                <div class="col-12 sliders">
+               
+                    <mat-slider [(ngModel)]="sliderValueRed" [min]="0" [step]="1" [max]="256"></mat-slider>
+                    <mat-slider [(ngModel)]="sliderValueGreen" [min]="0" [step]="1" [max]="256"></mat-slider>
+                    <mat-slider [(ngModel)]="sliderValueBlue" [min]="0" [step]="1" [max]="256"></mat-slider>
+                    <mat-slider [(ngModel)]="sliderValueIntensity" [min]="0" [step]="1" [max]="100"></mat-slider>
+                </div>
+                
+            </div>
+
 
             <div class="row mx-auto align-items-end action-buttons">
                 <div class="col-12 d-flex justify-content-end">

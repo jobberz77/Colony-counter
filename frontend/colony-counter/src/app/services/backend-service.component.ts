@@ -38,6 +38,18 @@ export class BackendService {
     request.subscribe();
   }
 
+  saveDarkfieldSettings(red: number, green: number, blue: number, intensity: number){
+    let request = this.http.post<any>(`${API_URL}/save_darkfield_settings`, 
+    {
+      'value_red': red,
+      'value_green': green,
+      'value_blue': blue,
+      'value_intensity': intensity,
+    });
+
+    request.subscribe();
+  }
+
   getPlaceholderImage(): Observable<string> {
     return this.http.get('../../assets/images/placeholder_image_base64.txt', {responseType: 'text'});
   }

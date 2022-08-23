@@ -31,8 +31,13 @@ export class HomeComponent implements OnInit {
 	// UI state variables
 	disableCountButtons: boolean = true;
 	drawingIsDisabled: boolean = true;
+	isWorking: boolean = false;
 
-	isWorking = false;
+	// RGBD Values for sliders
+	sliderValueRed: number = 0;
+	sliderValueGreen: number;
+	sliderValueBlue: number;
+	sliderValueIntensity: number;
 
 	constructor(private backendService: BackendService) { }
 

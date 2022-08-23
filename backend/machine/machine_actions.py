@@ -10,7 +10,7 @@ import serial
 from picamera import PiCamera
 import RPi.GPIO as GPIO
 import numpy as np
-import os
+from helpers import json_helper
 
 #run in sudo
 GPIO.setmode(GPIO.BCM)
@@ -178,6 +178,9 @@ def swallow_container_and_return_countresult():
     code = scan_qr_code()
     
     #TODO Read in the values defined in the settings here
+    json_values = json_helper.get_darkfield_values()
+    print(json_values)
+
     r = 80
     g = 50
     b = 40

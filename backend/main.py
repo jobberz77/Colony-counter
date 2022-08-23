@@ -7,10 +7,8 @@ from PIL import Image
 from entities.count_result_model import CountResult
 from entities.count_result_schema import CountResultSchema
 import io
-import re
-from io import BytesIO
-
 from machine import machine_actions
+from helpers import json_helper
 
 app = Flask(__name__)
 CORS(app, resources={ r"/*": { 'origins': '*' }})
@@ -36,35 +34,6 @@ def swallow_container_and_return_image():
     
     return jsonify(resultSchema)
 
-@app.route('/get_plateau')
-def get_plateau():
-    machine_actions.push_out_container()
-
-    return jsonify('Success')
-
-@app.route('/shutdown')
-def shutdown():
-    machine_actions.push_in_container()
-
-    return jsonify('Success')
-
-
-@app.route('/get_image')
-def get_image():
-    try:
-        image_path = './assets/images/colony_with_count.jpg' # point to your image location
-        base64_image = get_response_image(image_path)
-        
-        result = CountResult(base64_image, 25, 'xxxx-xxxx-xxxx-xxxx')
-        
-        schema = CountResultSchema(many=False)
-        resultSchema = schema.dump(result)
-        
-    except Exception as e:
-        return jsonify(e.args), status.HTTP_400_BAD_REQUEST
-        
-    return jsonify(resultSchema) # send the result to client
-    
 @app.route('/save_image', methods=['POST'])
 @cross_origin()
 def save_result_and_push_out_container():
@@ -88,11 +57,34 @@ def save_result_and_push_out_container():
     
     return jsonify('Success')
 
+@app.route('/get_plateau')
+def get_plateau():
+    machine_actions.push_out_container()
+
+    return jsonify('Success')
+
+@app.route('/shutdown')
+def shutdown():
+    machine_actions.push_in_container()
+
+    return jsonify('Success')
+
 @app.route('/end_cycle_prematurely')
 def end_cycle_prematurely():
     machine_actions.push_out_container()
     
     return jsonify('Success')
+
+@app.route('/save_darkfield_settings')
+def save_darkfield_settings():
+    #Save values to json file
+    values = request.get_json()
+    json_helper.save_darkfield_values()
+    return jsonify('Success')
+
+@app.route('/get_darkfield_settings', methods=['POST'])
+def get_darkfield_settings():
+    return json_helper.get_darkfield_values()
 
 def build_image_name(count, serialnumber):
     return f"results/{count:.0f}--{serialnumber[:-3]}.jpg"     
