@@ -1,17 +1,19 @@
 import base64
 from flask import Flask, jsonify, request, send_file
 from flask_api import status
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from base64 import encodebytes
 from PIL import Image
 from entities.count_result_model import CountResult
 from entities.count_result_schema import CountResultSchema
 import io
+import re
+from io import BytesIO
 
 from machine import machine_actions
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={ r"/*": { 'origins': '*' }})
 
 def get_response_image(image_path):
     pil_img = Image.open(image_path, mode='r') # reads the PIL image
@@ -38,7 +40,6 @@ def swallow_container_and_return_image():
 @app.route('/get_image')
 def get_image():
     try:
-        # raise Exception('QR_CODE')
         image_path = './assets/images/colony_with_count.jpg' # point to your image location
         base64_image = get_response_image(image_path)
         
@@ -53,18 +54,23 @@ def get_image():
     return jsonify(resultSchema) # send the result to client
     
 @app.route('/save_image', methods=['POST'])
+@cross_origin()
 def save_result_and_push_out_container():
     try: 
         saved_count_result = CountResultSchema().load(request.get_json())
 
         result = CountResult(**saved_count_result)
+
+        print(result.base64_image[0 : 50])
         
         print('name', result.count, result.serialnumber[:-3])
+
         #save result to disk
-        with open(build_image_name(result.count, result.serialnumber), "wb") as fh:
+        with open(build_image_name(result.count, result.serialnumber), "wb+") as fh:
             fh.write(base64.b64decode((result.base64_image)))
-            
-        machine_actions.push_out_container()
+
+        machine_actions.push_out_container() 
+        
     except Exception as e: 
         return jsonify(e, 400)
     
@@ -78,7 +84,7 @@ def end_cycle_prematurely():
     return jsonify('Success')
 
 def build_image_name(count, serialnumber):
-    return f"results/{count:.0f}--{serialnumber}.jpg"     
+    return f"results/{count:.0f}--{serialnumber[:-3]}.jpg"     
 
 if __name__=="__main__":
     app.run()

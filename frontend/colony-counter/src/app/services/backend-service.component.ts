@@ -43,7 +43,6 @@ export class BackendService {
   getLoadingImage(): Observable<string> {
     return this.http.get('../../assets/images/loading_image_base64.txt', {responseType: 'text'});
   }
-  
 
   private static _handleError(err: HttpErrorResponse | any) {
     return throwError(() => err.message || 'Error: Unable to complete request.');

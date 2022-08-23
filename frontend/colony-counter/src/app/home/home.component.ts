@@ -189,6 +189,7 @@ export class HomeComponent implements OnInit {
 
 	addBase64PrefixIfNeeded(base64Value: string) {
 		if (!base64Value.startsWith('data:image/jpg;base64,')) {
+			
 			return 'data:image/jpg;base64,' + base64Value;
 		}
 		return base64Value;
