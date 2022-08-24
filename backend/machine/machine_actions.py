@@ -172,11 +172,7 @@ def convert_cv2_image_to_base64(image):
     base64_image = base64.b64encode(buffer)
     return base64_image
 
-def swallow_container_and_return_countresult():
-    motion(M_F, M_R, M_S, sf, sr, 'r') #backward 
-
-    code = scan_qr_code()
-    
+def take_photo_and_return_image_and_count(qr_code):
     darkfield_settings = json_helper.get_darkfield_values_as_object()
 
     r = darkfield_settings.red
@@ -186,13 +182,21 @@ def swallow_container_and_return_countresult():
 
     darkfield(17,r,g,b,d)
 
-    img = take_picture(code)
+    img = take_picture(qr_code)
     
     # result is a tuple (img, amount)
     result = calculate_count_and_return_image_and_count(img)
     
-    response = CountResult(convert_cv2_image_to_base64(result[0]), result[1], code)
+    response = CountResult(convert_cv2_image_to_base64(result[0]), result[1], qr_code)
     return response
+
+
+def swallow_container_and_return_countresult():
+    motion(M_F, M_R, M_S, sf, sr, 'r') #backward 
+
+    code = scan_qr_code()
+    
+    return take_photo_and_return_image_and_count(code)
 
 
 def push_out_container():    

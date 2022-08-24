@@ -54,6 +54,20 @@ def save_result_and_push_out_container():
     
     return jsonify('Success')
 
+@app.route('/retake_photo', methods=['GET'])
+def retake_photo():
+    try:
+        args = request.args
+        result = machine_actions.take_photo_and_return_image_and_count(args.get('qr_code'))
+        
+        schema = CountResultSchema(many=False)
+        resultSchema = schema.dump(result)
+        
+    except Exception as e:
+        return jsonify(e.args), status.HTTP_400_BAD_REQUEST 
+    
+    return jsonify(resultSchema)
+
 @app.route('/get_plateau')
 def get_plateau():
     machine_actions.push_out_container()
