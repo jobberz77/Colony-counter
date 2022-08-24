@@ -4,11 +4,11 @@
         <span>Colony Counter</span>
         <span class="header-spacer"></span>
 
-        <button *ngIf="!isWorking" type="button" class="btn btn-light save-button" (click)="getPlateau()" style="padding-right: 10px">Opstarten</button>
-        <button *ngIf="!isWorking" type="button" class="btn btn-warning save-button" (click)="shutdown()" style="padding-right: 10px">Afsluiten</button>
-        <button *ngIf="!isWorking" type="button" class="btn btn-success save-button" (click)="startCycle()">Begin</button>
+        <button *ngIf="!isWorking" type="button" class="btn btn-success startup-button" (click)="getPlateau()">Opstarten</button>
+        <button *ngIf="!isWorking" type="button" class="btn btn-success shutdown-button" (click)="shutdown()">Afsluiten</button>
+        <button *ngIf="!isWorking" type="button" class="btn btn-success start-button" (click)="startCycle()">Begin telling</button>
 
-        <button *ngIf="isWorking" type="button" class="btn btn-danger save-button" (click)="stopCyclePrematurely()">Stop</button>
+        <button *ngIf="isWorking" type="button" class="btn btn-danger stop-button" (click)="stopCyclePrematurely()">Stop</button>
     </mat-toolbar>
 </div>
 
@@ -36,10 +36,14 @@
                     <mat-slider [(ngModel)]="darkfieldSettings.blue" [min]="0" [step]="1" [max]="256"></mat-slider>
                     <mat-slider [(ngModel)]="darkfieldSettings.intensity" [min]="0" [step]="1" [max]="100"></mat-slider>
                 </div>
-                <div class="row">
-                    <button type="button" class="btn btn-success retake-photo-button" (click)="retakePhoto()">Foto opnieuw maken</button>
-                    <button type="button" class="btn btn-success save-button" (click)="saveDarkfieldSettings()">Instellingen opslaan</button>
+
+                <div class="row align-items-end darkfield-buttons">
+                    <div class="col-12 d-flex justify-content-end" style="padding-right: 0px">
+                        <button [disabled]="retakePhotoIsEnabled" type="button" class="btn btn-success retake-photo-button" (click)="retakePhoto()">Nieuwe foto</button>
+                        <button [disabled]="changeSlidersIsEnabled"type="button" class="btn btn-success save-settings-button" (click)="saveDarkfieldSettings()">Instellingen opslaan</button>
+                    </div>
                 </div>
+
             </div>
 
 

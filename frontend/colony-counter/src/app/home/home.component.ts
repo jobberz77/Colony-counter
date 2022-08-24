@@ -33,6 +33,8 @@ export class HomeComponent implements OnInit {
 	disableCountButtons: boolean = true;
 	drawingIsDisabled: boolean = true;
 	isWorking: boolean = false;
+	retakePhotoIsEnabled: boolean = false;
+	changeSlidersIsEnabled: boolean = true;
 
 	// RGBD Values for sliders
 	darkfieldSettings: DarkfieldSettingsModel = new DarkfieldSettingsModel();
@@ -61,15 +63,17 @@ export class HomeComponent implements OnInit {
 
 	startCycle() {
 		this.isWorking = true;
+		this.changeSlidersIsEnabled = false;
 		this.setLoadingImage();
 
 		this.backendService.swallowContainerAndGetResultingImage().subscribe(result => {
-
 			this.calculatedCount = result.count;
 			this.countResultModel = result;
 
 			this.disableCountButtons = false;
 			this.drawingIsDisabled = false;
+			this.retakePhotoIsEnabled = true;
+			this.changeSlidersIsEnabled = true;
 
 			this.drawOnImage();
 		},
@@ -86,6 +90,7 @@ export class HomeComponent implements OnInit {
 		this.setPlaceholderImage();
 		this.resetCount();
 		this.isWorking = false;
+		this.retakePhotoIsEnabled = false;
 
 		this.backendService.getPlateau();
 	}
@@ -98,7 +103,9 @@ export class HomeComponent implements OnInit {
 
 		this.setPlaceholderImage();
 		this.resetCount();
+
 		this.isWorking = false;
+		this.retakePhotoIsEnabled = false;
 	}
 
 	// Set up canvas and insert the placeholder image
@@ -140,15 +147,14 @@ export class HomeComponent implements OnInit {
 	}
 
 	retakePhoto() {
+		this.retakePhotoIsEnabled = false;
 		this.backendService.retakePhoto(this.countResultModel.serialnumber).subscribe(result => {
 
 			this.calculatedCount = result.count;
 			this.countResultModel = result;
 
-			// this.disableCountButtons = false;
-			// this.drawingIsDisabled = false;
-
 			this.drawOnImage();
+			this.retakePhotoIsEnabled = true;
 		});
 	}
 
