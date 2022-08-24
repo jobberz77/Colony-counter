@@ -31,13 +31,15 @@
 
             <div class="row mx-auto slider-window">
                 <div class="col-12 sliders">
-               
-                    <mat-slider [(ngModel)]="sliderValueRed" [min]="0" [step]="1" [max]="256"></mat-slider>
-                    <mat-slider [(ngModel)]="sliderValueGreen" [min]="0" [step]="1" [max]="256"></mat-slider>
-                    <mat-slider [(ngModel)]="sliderValueBlue" [min]="0" [step]="1" [max]="256"></mat-slider>
-                    <mat-slider [(ngModel)]="sliderValueIntensity" [min]="0" [step]="1" [max]="100"></mat-slider>
+                    <mat-slider [(ngModel)]="darkfieldSettings.red" [min]="0" [step]="1" [max]="256"></mat-slider>
+                    <mat-slider [(ngModel)]="darkfieldSettings.green" [min]="0" [step]="1" [max]="256"></mat-slider>
+                    <mat-slider [(ngModel)]="darkfieldSettings.blue" [min]="0" [step]="1" [max]="256"></mat-slider>
+                    <mat-slider [(ngModel)]="darkfieldSettings.intensity" [min]="0" [step]="1" [max]="100"></mat-slider>
                 </div>
-                
+                <div class="row">
+                    <button type="button" class="btn btn-success retake-photo-button" (click)="retakePhoto()">Foto opnieuw maken</button>
+                    <button type="button" class="btn btn-success save-button" (click)="saveDarkfieldSettings()">Instellingen opslaan</button>
+                </div>
             </div>
 
 

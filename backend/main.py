@@ -4,6 +4,8 @@ from flask_api import status
 from flask_cors import CORS, cross_origin
 from base64 import encodebytes
 from PIL import Image
+from entities.darkfield_values_model import DarkfieldSettings
+from entities.darkfield_values_schema import DarkfieldSettingsSchema
 from entities.count_result_model import CountResult
 from entities.count_result_schema import CountResultSchema
 import io
@@ -39,12 +41,7 @@ def swallow_container_and_return_image():
 def save_result_and_push_out_container():
     try: 
         saved_count_result = CountResultSchema().load(request.get_json())
-
         result = CountResult(**saved_count_result)
-
-        print(result.base64_image[0 : 50])
-        
-        print('name', result.count, result.serialnumber[:-3])
 
         #save result to disk
         with open(build_image_name(result.count, result.serialnumber), "wb+") as fh:
@@ -75,16 +72,18 @@ def end_cycle_prematurely():
     
     return jsonify('Success')
 
-@app.route('/save_darkfield_settings')
+@app.route('/save_darkfield_settings', methods=['POST'])
 def save_darkfield_settings():
-    #Save values to json file
-    values = request.get_json()
-    json_helper.save_darkfield_values()
+    darkfield_settings = DarkfieldSettingsSchema().load(request.get_json())
+    result = DarkfieldSettings(**darkfield_settings)
+
+    json_helper.save_darkfield_values(result.red, result.green, result.blue, result.intensity)
+
     return jsonify('Success')
 
-@app.route('/get_darkfield_settings', methods=['POST'])
+@app.route('/get_darkfield_settings')
 def get_darkfield_settings():
-    return json_helper.get_darkfield_values()
+    return json_helper.get_darkfield_values_json()
 
 def build_image_name(count, serialnumber):
     return f"results/{count:.0f}--{serialnumber[:-3]}.jpg"     

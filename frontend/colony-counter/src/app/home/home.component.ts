@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CountModel } from 'src/shared/models/CountModel';
 import { CountResultModel } from '../entities/count-result.model';
+import { DarkfieldSettingsModel } from '../entities/darkfield-settings.model';
 import { BackendService } from '../services/backend-service.component';
 import { SettingsComponent } from './settings/settings.component';
 
@@ -34,15 +35,18 @@ export class HomeComponent implements OnInit {
 	isWorking: boolean = false;
 
 	// RGBD Values for sliders
-	sliderValueRed: number = 0;
-	sliderValueGreen: number;
-	sliderValueBlue: number;
-	sliderValueIntensity: number;
+	darkfieldSettings: DarkfieldSettingsModel = new DarkfieldSettingsModel();
 
 	constructor(private backendService: BackendService) { }
 
 	ngOnInit(): void {
 		this.initializeCanvas();
+
+		this.backendService.getDarkfieldSettings().subscribe(result => {
+			this.darkfieldSettings = result;
+		});
+
+		// this.backendService.saveDarkfieldSettings(100, 101, 102, 99);
 	}
 
 	getPlateau() {
@@ -53,7 +57,6 @@ export class HomeComponent implements OnInit {
 		this.isWorking = false;
 		this.backendService.shutdown();
 	}
-
 
 	startCycle() {
 		this.isWorking = true;
@@ -135,6 +138,10 @@ export class HomeComponent implements OnInit {
 			});
 	}
 
+	retakePhoto() {
+		console.log('joe hoi');
+	}
+
 	drawOnImage() {
 		var self = this;
 
@@ -207,6 +214,21 @@ export class HomeComponent implements OnInit {
 	
 			this.drawOnImage();
 		});
+	}
+
+	getDarkfieldSettings() {
+		this.backendService.getDarkfieldSettings().subscribe(result => {
+			this.darkfieldSettings = result;
+		});
+	}
+
+	saveDarkfieldSettings() {
+		this.backendService.saveDarkfieldSettings(
+			this.darkfieldSettings.red,
+			this.darkfieldSettings.green,
+			this.darkfieldSettings.blue,
+			this.darkfieldSettings.intensity
+			);
 	}
 
 	addBase64PrefixIfNeeded(base64Value: string) {

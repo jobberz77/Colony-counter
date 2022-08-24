@@ -177,16 +177,14 @@ def swallow_container_and_return_countresult():
 
     code = scan_qr_code()
     
-    #TODO Read in the values defined in the settings here
-    json_values = json_helper.get_darkfield_values()
-    print(json_values)
+    darkfield_settings = json_helper.get_darkfield_values_as_object()
 
-    r = 80
-    g = 50
-    b = 40
-    d = 5
+    r = darkfield_settings.red
+    g = darkfield_settings.green
+    b = darkfield_settings.blue
+    d = darkfield_settings.intensity
 
-    darkfield(17,g,r,b,d)
+    darkfield(17,r,g,b,d)
 
     img = take_picture(code)
     

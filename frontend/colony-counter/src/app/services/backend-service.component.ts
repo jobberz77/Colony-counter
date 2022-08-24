@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { API_URL } from '../env';
 import { CountResultModel } from '../entities/count-result.model';
+import { DarkfieldSettingsModel } from '../entities/darkfield-settings.model'
 
 
 @Injectable()
@@ -41,13 +42,17 @@ export class BackendService {
   saveDarkfieldSettings(red: number, green: number, blue: number, intensity: number){
     let request = this.http.post<any>(`${API_URL}/save_darkfield_settings`, 
     {
-      'value_red': red,
-      'value_green': green,
-      'value_blue': blue,
-      'value_intensity': intensity,
+      'red': red,
+      'green': green,
+      'blue': blue,
+      'intensity': intensity,
     });
 
     request.subscribe();
+  }
+
+  getDarkfieldSettings(): Observable<DarkfieldSettingsModel> {
+    return this.http.get<DarkfieldSettingsModel>(`${API_URL}/get_darkfield_settings`);
   }
 
   getPlaceholderImage(): Observable<string> {
