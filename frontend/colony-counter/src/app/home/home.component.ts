@@ -45,12 +45,13 @@ export class HomeComponent implements OnInit {
 		this.backendService.getDarkfieldSettings().subscribe(result => {
 			this.darkfieldSettings = result;
 		});
-
-		// this.backendService.saveDarkfieldSettings(100, 101, 102, 99);
 	}
 
 	getPlateau() {
 		this.backendService.getPlateau();
+		this.backendService.getDarkfieldSettings().subscribe(result => {
+			this.darkfieldSettings = result;
+		});
 	}
 
 	shutdown() {
@@ -139,7 +140,16 @@ export class HomeComponent implements OnInit {
 	}
 
 	retakePhoto() {
-		console.log('joe hoi');
+		this.backendService.retakePhoto(this.countResultModel.serialnumber).subscribe(result => {
+
+			this.calculatedCount = result.count;
+			this.countResultModel = result;
+
+			// this.disableCountButtons = false;
+			// this.drawingIsDisabled = false;
+
+			this.drawOnImage();
+		});
 	}
 
 	drawOnImage() {

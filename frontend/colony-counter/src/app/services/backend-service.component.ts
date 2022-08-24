@@ -28,6 +28,10 @@ export class BackendService {
     this.http.get<any>(`${API_URL}/end_cycle_prematurely`).subscribe();
   }
 
+  retakePhoto(qr_code: string): Observable<CountResultModel> {
+    return this.http.get<any>(`${API_URL}/retake_photo?qr_code=` + qr_code);
+  }
+
   saveImage(countResultModel: CountResultModel) {
     let request = this.http.post<any>(`${API_URL}/save_image`, 
     {
