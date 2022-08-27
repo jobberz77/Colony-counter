@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
 	canvasContext: CanvasRenderingContext2D;
 	image: HTMLImageElement;
 	imageWidth: 1450;
-	imageHeight: 865;
+	imageHeight: 920;
 	drawSize = 8;
 	drawColor = 'red';
 
@@ -91,6 +91,8 @@ export class HomeComponent implements OnInit {
 		this.resetCount();
 		this.isWorking = false;
 		this.retakePhotoIsEnabled = false;
+		this.changeSlidersIsEnabled = true;
+		this.disableCountButtons = true;
 
 		this.backendService.getPlateau();
 	}
@@ -111,7 +113,7 @@ export class HomeComponent implements OnInit {
 	// Set up canvas and insert the placeholder image
 	initializeCanvas() {
 		this.imageWidth = 1450;
-		this.imageHeight = 865;
+		this.imageHeight = 920;
 
 		this.setPlaceholderImage();
 	}

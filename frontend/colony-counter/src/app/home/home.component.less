@@ -3,7 +3,7 @@
 }
 
 .mat-toolbar {
-	background: #415E6F;
+	background: #16222b;
 	color: #FFFFFF;
 
 	.icon-button {
@@ -19,8 +19,8 @@
 		align-content: center;
 		display: flex;
 		align-items: center;
-		background: #123466;
-		border-color: #123466;
+		background: #5081ca;
+		border-color: #5081ca;
 		color: white;
 		margin-right: 10px;
 	}
@@ -30,8 +30,8 @@
 		align-content: center;
 		display: flex;
 		align-items: center;
-		background: #D66F10;
-		border-color: #D66F10;
+		background: #123466;
+		border-color: #123466;
 		color: white;
 		margin-right: 60px;
 	}
@@ -41,8 +41,8 @@
 		align-content: center;
 		display: flex;
 		align-items: center;
-		background: #2E872C;
-		border-color: #2E872C;
+		background: #889aad;
+		border-color: #889aad;
 		color: white;
 		margin-right: 20px;
 	}
@@ -60,14 +60,15 @@
 
 
 .sidebar {
-	background-color: #4C4C4C;
+	background-color: #36434b;
 	height: 100vw;
 	padding-top: 10px;
 
 	.counter-window {
-		background: #9D9D9D;
+		background: #59676e;
 		width: 96%;
 		height: 20vh;
+		margin-top: 40px;
 		color:#FFFFFF;
 
 		.counter-stats {
@@ -92,7 +93,7 @@
 	}
 
 	.slider-window {
-		background: #9D9D9D;
+		background: #59676e;
 		width: 96%;
 		height: 30vh;
 		margin-top: 50px;
@@ -104,6 +105,63 @@
 			align-content: center;
 			flex-direction: column;
 			padding: 10px 40px 10px 40px;
+
+			.slider-red {
+				::ng-deep .mat-slider-track-fill {
+					background-color: rgb(235, 61, 18) !important;
+				}
+			
+				::ng-deep .mat-slider-thumb-label {
+					background-color: rgb(235, 61, 18) !important;
+				}
+			
+				::ng-deep .mat-slider-thumb {
+					background-color: rgb(235, 61, 18) !important;
+				}
+			}
+	
+			.slider-green {
+				::ng-deep .mat-slider-track-fill {
+					background-color: rgb(59, 173, 30) !important;
+				}
+			
+				::ng-deep .mat-slider-thumb-label {
+					background-color: rgb(59, 173, 30)  !important;
+				}
+			
+				::ng-deep .mat-slider-thumb {
+					background-color: rgb(59, 173, 30)  !important;
+				}
+
+			}
+	
+			.slider-blue {
+				::ng-deep .mat-slider-track-fill {
+					background-color: rgb(55, 55, 214) !important;
+				}
+			
+				::ng-deep .mat-slider-thumb-label {
+					background-color: rgb(55, 55, 214) !important;
+				}
+			
+				::ng-deep .mat-slider-thumb {
+					background-color: rgb(55, 55, 214) !important;
+				}
+			}
+
+			.slider-intensity {
+				::ng-deep .mat-slider-track-fill {
+					background-color: rgba(255, 255, 255, 0.562) !important;
+				}
+			
+				::ng-deep .mat-slider-thumb-label {
+					background-color: rgba(255, 255, 255, 0.562) !important;
+				}
+			
+				::ng-deep .mat-slider-thumb {
+					background-color: rgba(255, 255, 255, 0.562) !important;
+				}
+			}
 		}
 
 		.darkfield-buttons {
@@ -116,8 +174,8 @@
 				align-content: center;
 				display: flex;
 				align-items: center;
-				background: #123466;
-				border-color: #123466;
+				background: #5081ca;
+				border-color: #5081ca;
 				color: white;
 			}
 
@@ -126,39 +184,41 @@
 				align-content: center;
 				display: flex;
 				align-items: center;
-				background: #2E872C;
-				border-color: #2E872C;
+				background: #889aad;
+				border-color: #889aad;
 				color: white;
 				margin-left: 10px;
 			}
 		}
+
+		
 		
 	}
 
 	.action-buttons {
 		width: 96%;
-		height: 35vh;
+		height: 30vh;
 		padding-bottom: 15px;
-
-		.save-button {
-			font-size: 28px;
-			margin-right: 20px;
-			background: #2E872C;
-			border-color: #2E872C;
-		}
 
 		.undo-button {
 			font-size: 28px;
 			align-content: center;
 			display: flex;
 			align-items: center;
-			background: #D66F10;
-			border-color: #D66F10;
+			background: #5081ca;
+			border-color: #5081ca;
 			color: white;
+			margin-right: 20px;
 
 			.refresh-icon {
 				transform: scale(1.7);
 			}
+		}
+
+		.save-button {
+			font-size: 28px;
+			background: #889aad;
+			border-color: #889aad;
 		}
 	}
 }

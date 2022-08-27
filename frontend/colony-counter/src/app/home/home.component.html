@@ -31,16 +31,16 @@
 
             <div class="row mx-auto slider-window">
                 <div class="col-12 sliders">
-                    <mat-slider [(ngModel)]="darkfieldSettings.red" [min]="0" [step]="1" [max]="256"></mat-slider>
-                    <mat-slider [(ngModel)]="darkfieldSettings.green" [min]="0" [step]="1" [max]="256"></mat-slider>
-                    <mat-slider [(ngModel)]="darkfieldSettings.blue" [min]="0" [step]="1" [max]="256"></mat-slider>
-                    <mat-slider [(ngModel)]="darkfieldSettings.intensity" [min]="0" [step]="1" [max]="100"></mat-slider>
+                    <mat-slider [(ngModel)]="darkfieldSettings.red" [min]="0" [step]="1" [max]="256" class="slider-red"></mat-slider>
+                    <mat-slider [(ngModel)]="darkfieldSettings.green" [min]="0" [step]="1" [max]="256" class="slider-green"></mat-slider>
+                    <mat-slider [(ngModel)]="darkfieldSettings.blue" [min]="0" [step]="1" [max]="256" class="slider-blue"></mat-slider>
+                    <mat-slider [(ngModel)]="darkfieldSettings.intensity" [min]="0" [step]="1" [max]="100" class="slider-intensity"></mat-slider>
                 </div>
 
                 <div class="row align-items-end darkfield-buttons">
                     <div class="col-12 d-flex justify-content-end" style="padding-right: 0px">
-                        <button [disabled]="retakePhotoIsEnabled" type="button" class="btn btn-success retake-photo-button" (click)="retakePhoto()">Nieuwe foto</button>
-                        <button [disabled]="changeSlidersIsEnabled"type="button" class="btn btn-success save-settings-button" (click)="saveDarkfieldSettings()">Instellingen opslaan</button>
+                        <button [disabled]="!retakePhotoIsEnabled" type="button" class="btn btn-success retake-photo-button" (click)="retakePhoto()">Nieuwe foto</button>
+                        <button [disabled]="!changeSlidersIsEnabled"type="button" class="btn btn-success save-settings-button" (click)="saveDarkfieldSettings()">Instellingen opslaan</button>
                     </div>
                 </div>
 
@@ -49,10 +49,10 @@
 
             <div class="row mx-auto align-items-end action-buttons">
                 <div class="col-12 d-flex justify-content-end">
-                    <button type="button" class="btn btn-success save-button" [disabled]="disableCountButtons" (click)="endCycleAndSaveImage()">Opslaan</button>
                     <button id="undoButton" type="button" class="btn btn-warning undo-button" [disabled]="disableCountButtons" (click)="undoLastCount()">
                         <mat-icon class="refresh-icon">refresh</mat-icon>
                     </button>
+                    <button type="button" class="btn btn-success save-button" [disabled]="disableCountButtons" (click)="endCycleAndSaveImage()">Opslaan</button>
                 </div>
             </div>
 
@@ -65,7 +65,7 @@
                 <canvas
                   id="canvas"
                   width="1450"
-                  height="865"
+                  height="1000"
                   style="padding: 0"
                 ></canvas>
               </div>
