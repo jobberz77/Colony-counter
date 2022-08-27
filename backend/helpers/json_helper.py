@@ -1,4 +1,5 @@
 import json
+import os
 from entities.darkfield_values_model import DarkfieldSettings
 
 darkfield_values_json_path = 'assets/data/darkfield_settings.json'
@@ -9,6 +10,8 @@ def save_darkfield_values(red, green, blue, intensity):
         json.dump(json_string, outfile)
 
 def get_darkfield_values_json():
+    print(os.getcwd())
+    print(darkfield_values_json_path)
     with open(darkfield_values_json_path) as json_file:
         data = json.load(json_file)
 

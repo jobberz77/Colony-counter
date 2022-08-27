@@ -6,7 +6,7 @@
 
         <button *ngIf="!isWorking" type="button" class="btn btn-success startup-button" (click)="getPlateau()">Opstarten</button>
         <button *ngIf="!isWorking" type="button" class="btn btn-success shutdown-button" (click)="shutdown()">Afsluiten</button>
-        <button *ngIf="!isWorking" type="button" class="btn btn-success start-button" (click)="startCycle()">Begin telling</button>
+        <button *ngIf="!isWorking" type="button" class="btn btn-success start-button" (click)="startCycle()">Start telling</button>
 
         <button *ngIf="isWorking" type="button" class="btn btn-danger stop-button" (click)="stopCyclePrematurely()">Stop</button>
     </mat-toolbar>

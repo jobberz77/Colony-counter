@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
 	canvasContext: CanvasRenderingContext2D;
 	image: HTMLImageElement;
 	imageWidth: 1450;
-	imageHeight: 920;
+	imageHeight: 1000;
 	drawSize = 8;
 	drawColor = 'red';
 
@@ -80,6 +80,8 @@ export class HomeComponent implements OnInit {
 		err => {
 			if (err.error[0] === 'QR_CODE') {
 				alert('QR code kon niet gescand worden. Plaats het bakje opnieuw op het plateau en zorg dat de QR code aan de goede kant staat.');
+			} else {
+				alert('Er is iets misgegaan, probeer het opnieuw.')
 			}
 
 			this.backendService.endCyclePrematurely();
@@ -113,7 +115,7 @@ export class HomeComponent implements OnInit {
 	// Set up canvas and insert the placeholder image
 	initializeCanvas() {
 		this.imageWidth = 1450;
-		this.imageHeight = 920;
+		this.imageHeight = 1000;
 
 		this.setPlaceholderImage();
 	}
